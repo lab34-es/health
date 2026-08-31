@@ -1,0 +1,7 @@
+node_modules/
+dist/
+dist-test/
+*.tsbuildinfo
+lab34-health-context/database.sql
+lab34-health-context/reports/
+.DS_Store

@@ -1,0 +1,2620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ACME INTL — lab34/health</title>
+<meta name="generator" content="@lab34/health 1.0.0">
+<meta name="description" content="lab34/health report, run #482, generated 2026-08-20T09:14:02.000Z">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* lab34/health report — the design system of the report template, as classes.
+   Colour values come from the YAML's `theme` block at render time; the custom
+   properties below are the fallbacks used before that is applied. */
+
+:root {
+  color-scheme: light;
+  --background: #E9E7E4;
+  --surface: #F3F2F2;
+  --surface-raised: #FFFFFF;
+  --surface-sunken: #EEEBE7;
+  --border: #D8D5D1;
+  --border-soft: #EEEBE7;
+  --text: #201F1D;
+  --text-strong: #2D2B2B;
+  --text-muted: #9B9797;
+  --text-faint: #C9C6C2;
+  --accent: #B68235;
+  --accent-soft: #EFE4D2;
+  --accent-deep: #7A5A26;
+  --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  --gutter: clamp(16px, 3.5vw, 40px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { background: var(--background); }
+
+body {
+  font-family: var(--sans);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--text); }
+::selection { background: var(--accent-soft); }
+input:focus-visible, [tabindex]:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.page { max-width: 1240px; margin: 0 auto; padding: clamp(12px, 3vw, 40px); }
+.sheet { background: var(--surface); border: 1px solid var(--border); }
+
+/* --- header --------------------------------------------------------------- */
+
+.masthead {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: 12px 16px; padding: 24px var(--gutter); border-bottom: 1px solid var(--border);
+}
+.masthead__identity { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.masthead__wordmark { font-family: var(--mono); font-weight: 500; font-size: 18px; }
+.masthead__meta { font-family: var(--mono); font-size: 13px; color: var(--text-muted); }
+.masthead__client {
+  font-family: var(--sans); font-weight: 600; font-size: 14px; letter-spacing: 0.04em;
+  border: 1px dashed var(--text-muted); padding: 5px 12px;
+}
+
+.contents {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 28px;
+  padding: 14px var(--gutter); border-bottom: 1px solid var(--border);
+  background: var(--surface-sunken); position: sticky; top: 0; z-index: 5;
+  font-family: var(--mono); font-size: 12.5px;
+}
+.contents__label { color: var(--text-muted); letter-spacing: 0.06em; }
+
+.notice {
+  padding: 12px var(--gutter); border-bottom: 1px solid var(--border);
+  background: #F6EDE9; font-family: var(--mono); font-size: 12.5px; color: #7A2F22;
+}
+.notice__title { font-weight: 500; }
+.notice ul { margin: 6px 0 0 18px; }
+
+/* --- sections ------------------------------------------------------------- */
+
+/* Jumping to a section must not park its heading under the sticky contents
+   bar, so anchors stop clear of it. */
+.section { padding: 28px var(--gutter); border-bottom: 1px solid var(--border); scroll-margin-top: 52px; }
+.section:last-of-type { border-bottom: none; }
+
+.section__eyebrow {
+  font-family: var(--sans); font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.section__title { font-family: var(--sans); font-size: 22px; font-weight: 600; }
+.section__head {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 10px 20px; margin-bottom: 20px;
+}
+.section__aside { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.section__headline {
+  font-family: var(--mono); font-size: 13px; color: var(--text-muted); margin-bottom: 20px;
+}
+
+/* --- 01 summary ----------------------------------------------------------- */
+
+.kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1px; background: var(--border); border: 1px solid var(--border);
+}
+.kpi { background: var(--surface-raised); padding: 18px 20px 16px; }
+.kpi__label {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.kpi__figure { display: flex; align-items: baseline; gap: 6px; margin-top: 10px; }
+.kpi__value {
+  font-family: var(--sans); font-size: 30px; font-weight: 600;
+  font-feature-settings: 'tnum'; line-height: 1;
+}
+.kpi__unit { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.kpi__trend {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; margin-top: 12px;
+}
+.kpi__delta { font-family: var(--mono); font-size: 12px; }
+.section__note {
+  margin-top: 14px; font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+}
+
+/* --- 02 evolution --------------------------------------------------------- */
+
+.panel { background: var(--surface-raised); border: 1px solid var(--border); }
+
+.trend {
+  display: grid; grid-template-columns: minmax(180px, 1fr) minmax(200px, 2fr) 92px 92px;
+  gap: 12px 20px; align-items: center; padding: 14px 20px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.trend__name { font-size: 14px; font-weight: 600; }
+.trend__hint { font-family: var(--mono); font-size: 11.5px; color: var(--text-muted); }
+.trend__bars { display: flex; align-items: flex-end; gap: 3px; height: 34px; }
+.trend__bar { flex: 1; }
+.trend__current {
+  font-family: var(--mono); font-size: 14px; font-feature-settings: 'tnum'; text-align: right;
+}
+.trend__delta { font-family: var(--mono); font-size: 12.5px; text-align: right; }
+.legend {
+  display: flex; flex-wrap: wrap; gap: 6px 22px; padding: 12px 20px;
+  font-family: var(--mono); font-size: 11.5px; color: var(--text-muted);
+}
+
+/* --- 03 pull requests ----------------------------------------------------- */
+
+.flags { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--mono); font-size: 12px; }
+
+/* The fixed tracks below, plus the 14px gaps and the row's 20px side padding,
+   come to 1066px — exactly the width of the sheet's content column at the
+   1240px page maximum, so a desktop reader gets the whole table with no
+   horizontal scrolling and narrower viewports scroll it rather than squashing
+   the columns into unreadability. */
+.table { overflow-x: auto; background: var(--surface-raised); border: 1px solid var(--border); }
+.table__inner { min-width: 1066px; }
+.table--cicd .table__inner { min-width: 1022px; }
+
+.row {
+  display: grid; grid-template-columns: 110px minmax(240px, 1fr) 96px 84px 100px 76px 150px 72px;
+  gap: 14px; padding: 14px 20px; align-items: baseline;
+}
+.row--head {
+  padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+.table--cicd .row {
+  grid-template-columns: 118px minmax(200px, 1fr) 150px 100px 96px 84px minmax(150px, 1fr);
+  align-items: center;
+}
+.row__head {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--text-strong); user-select: none;
+  background: none; border: 0; text-align: left; padding: 0;
+}
+.row__head--sortable { cursor: pointer; }
+.row__head--right { text-align: right; }
+.row__arrow { color: var(--accent); }
+
+.pr { border-bottom: 1px solid var(--border-soft); }
+.pr__summary { cursor: pointer; }
+.pr__summary:hover { background: var(--surface-sunken); }
+.mono { font-family: var(--mono); font-size: 12.5px; color: var(--text-strong); }
+.mono--right { text-align: right; font-feature-settings: 'tnum'; }
+.pr__title { font-size: 14px; font-weight: 600; }
+.pr__branches { font-family: var(--mono); font-size: 11.5px; color: var(--text-muted); }
+.pr__reviewers { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { font-family: var(--mono); font-size: 11px; padding: 2px 6px; border: 1px solid; }
+.pr__chevron { font-family: var(--mono); font-size: 11.5px; color: var(--accent); text-align: right; }
+
+.pr__detail {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px; padding: 4px 20px 22px;
+}
+.detail__heading {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;
+}
+.commits { display: flex; flex-direction: column; gap: 6px; }
+.commit { display: flex; gap: 12px; font-family: var(--mono); font-size: 12px; }
+.commit__sha { color: var(--accent); flex-shrink: 0; }
+.commit__message { color: var(--text-strong); }
+.commit__spacer { flex: 1; }
+.commit__when { color: var(--text-muted); flex-shrink: 0; }
+.facts { display: flex; flex-direction: column; gap: 8px; font-family: var(--mono); font-size: 12.5px; }
+.fact { display: flex; gap: 14px; border-bottom: 1px solid var(--border-soft); padding-bottom: 6px; }
+.fact__key { color: var(--text-muted); width: 108px; flex-shrink: 0; }
+
+/* --- 04 cicd -------------------------------------------------------------- */
+
+.pipeline { border-bottom: 1px solid var(--border-soft); }
+.pipeline__name { font-size: 14px; font-weight: 600; }
+.pipeline__branch { font-family: var(--mono); font-size: 11.5px; color: var(--text-muted); }
+.pipeline__when { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.pipeline__outcome { font-family: var(--mono); font-size: 12px; font-weight: 500; }
+.steps { display: flex; gap: 3px; margin-bottom: 6px; }
+.step { flex: 1; height: 10px; }
+.pipeline__note { font-family: var(--mono); font-size: 11.5px; }
+
+/* --- 05 testing ----------------------------------------------------------- */
+
+.empty {
+  background: var(--surface-raised); border: 1px dashed var(--text-faint);
+  padding: 30px 24px; text-align: center;
+}
+.empty__message { font-family: var(--mono); font-size: 13px; color: var(--text-muted); }
+.empty__hint { font-family: var(--mono); font-size: 12px; color: var(--text-faint); margin-top: 8px; }
+
+/* --- 06 jira summaries ---------------------------------------------------- */
+
+.search { display: flex; align-items: center; gap: 10px; }
+.search input {
+  font-family: var(--mono); font-size: 12.5px; padding: 7px 12px; width: 240px;
+  background: var(--surface-raised); border: 1px solid var(--border);
+  color: var(--text); border-radius: 0;
+}
+.search__count { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+
+.summary-group { margin-top: 28px; }
+.summary-group__head {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 8px 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.summary-group__title { font-family: var(--sans); font-size: 20px; font-weight: 600; }
+.summary-group__meta { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.tickets { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+
+.ticket { background: var(--surface-raised); border: 1px solid var(--border); }
+.ticket__head {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px;
+  padding: 14px 20px; border-bottom: 1px solid var(--border-soft);
+}
+.ticket__type { font-family: var(--mono); font-size: 11px; padding: 2px 7px; border: 1px solid; }
+.ticket__key { font-family: var(--mono); font-size: 12.5px; color: var(--accent); }
+.ticket__title { font-size: 15px; font-weight: 600; }
+.ticket__spacer { flex: 1; }
+.ticket__status {
+  font-family: var(--mono); font-size: 11.5px; color: var(--accent-deep);
+  background: var(--accent-soft); padding: 2px 8px;
+}
+.ticket__meta { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.ticket__description {
+  padding: 14px 20px 4px; font-size: 13.5px; color: var(--text-strong);
+  max-width: 78ch; text-wrap: pretty;
+}
+.ticket__timeline { padding: 14px 20px 18px; }
+.lanes { display: flex; flex-direction: column; gap: 4px; }
+.lane { display: grid; grid-template-columns: 120px 1fr 110px 56px; gap: 12px; align-items: center; }
+.lane__status { font-family: var(--mono); font-size: 11.5px; color: var(--text-muted); text-align: right; }
+.lane__track {
+  position: relative; height: 18px; background: var(--surface);
+  border-left: 1px solid #E2DFDB; overflow: hidden;
+}
+.lane__bar { position: absolute; top: 3px; height: 12px; }
+.lane__who {
+  font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lane__time {
+  font-family: var(--mono); font-size: 11.5px; font-feature-settings: 'tnum'; text-align: right;
+}
+.lane__time--heavy { font-weight: 500; }
+.axis { display: grid; grid-template-columns: 120px 1fr 110px 56px; gap: 12px; margin-top: 8px; }
+.axis__scale {
+  display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: 11px; color: var(--text-faint);
+}
+.summary-group__empty {
+  margin-top: 14px; font-family: var(--mono); font-size: 12.5px; color: var(--text-muted);
+}
+
+/* --- footer --------------------------------------------------------------- */
+
+.colophon {
+  padding: 14px var(--gutter); border-top: 1px solid var(--border);
+  display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between;
+  font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+}
+
+@media print {
+  .contents { position: static; }
+  .pr__detail { display: grid !important; }
+  .table { overflow-x: visible; }
+}
+
+</style>
+</head>
+<body>
+<div id="report"></div>
+
+<!-- The report's data. Everything above is layout; everything shown comes from
+     here. Edit a value and reload to change the report. A verbatim copy is
+     written alongside this file as index.yaml. -->
+<script type="application/yaml" id="report-data">
+# reports/<id>/index.yaml — generated by @lab34/health
+#
+# Every datapoint the report shows is in this file. index.html embeds a
+# verbatim copy of it and renders each section from it, so editing a value
+# here and reloading the HTML changes the report.
+#
+# See docs/formats.md for the field reference.
+version: "1"
+report:
+  id: "2026-08-20T09-14-02Z"
+  title: "lab34/health"
+  client_label: "ACME INTL"
+  generated_at: "2026-08-20T09:14:02.000Z"
+  timezone: "Europe/Brussels"
+  locale: "en-GB"
+  generator:
+    name: "@lab34/health"
+    version: "1.0.0"
+  run:
+    number: 482
+    started_at: "2026-08-20T09:10:50.000Z"
+    finished_at: "2026-08-20T09:14:02.000Z"
+    duration_seconds: 192
+    duration_display: "3m 12s"
+  previous_run:
+    number: 481
+    generated_at: "2026-08-19T09:14:02.000Z"
+  scope:
+    integrations: 2
+    repositories: 3
+    jira_summaries: 3
+  meta_display: "run #482 · 2026-08-20 09:14 UTC · synced 3m 12s · 3 repositories"
+  footer:
+    left: "reports/2026-08-20T09-14-02Z/index.html · index.yaml alongside"
+    right: "lab34/health · @lab34/health"
+  warnings: []
+theme:
+  palette:
+    background: "#E9E7E4"
+    surface: "#F3F2F2"
+    surface_raised: "#FFFFFF"
+    surface_sunken: "#EEEBE7"
+    border: "#D8D5D1"
+    border_soft: "#EEEBE7"
+    text: "#201F1D"
+    text_strong: "#2D2B2B"
+    text_muted: "#9B9797"
+    text_faint: "#C9C6C2"
+    accent: "#B68235"
+    accent_soft: "#EFE4D2"
+    accent_deep: "#7A5A26"
+  indicator:
+    ok: "#3E7C4F"
+    warning: "#B68235"
+    problem: "#B3402F"
+    neutral: "#C9C6C2"
+  direction:
+    better: "#3E7C4F"
+    worse: "#B3402F"
+    flat: "#C9C6C2"
+  named:
+    green: "#3E7C4F"
+    yellow: "#B68235"
+    red: "#B3402F"
+    grey: "#C9C6C2"
+  lanes:
+    To Do: "#C9C6C2"
+    In Progress: "#B68235"
+    Code Review: "#8E6A2C"
+    QA: "#6E7F5C"
+    Done: "#3E7C4F"
+navigation:
+  - index: "01"
+    id: "summary"
+    label: "Summary"
+    ref: "summary"
+  - index: "02"
+    id: "evolution"
+    label: "Evolution"
+    ref: "evolution"
+  - index: "03"
+    id: "pullrequests"
+    label: "Pull Requests Flow"
+    ref: "pull_requests"
+  - index: "04"
+    id: "cicd"
+    label: "CICD Flow"
+    ref: "cicd"
+  - index: "05"
+    id: "testing"
+    label: "Testing report"
+    ref: "testing"
+  - index: "06"
+    id: "jira"
+    label: "Jira summaries"
+    ref: "jira_summaries"
+runs:
+  - number: 475
+    generated_at: "2026-08-13T09:14:02.000Z"
+  - number: 476
+    generated_at: "2026-08-14T09:14:02.000Z"
+  - number: 477
+    generated_at: "2026-08-15T09:14:02.000Z"
+  - number: 478
+    generated_at: "2026-08-16T09:14:02.000Z"
+  - number: 479
+    generated_at: "2026-08-17T09:14:02.000Z"
+  - number: 480
+    generated_at: "2026-08-18T09:14:02.000Z"
+  - number: 481
+    generated_at: "2026-08-19T09:14:02.000Z"
+  - number: 482
+    generated_at: "2026-08-20T09:14:02.000Z"
+summary:
+  id: "summary"
+  index: "01"
+  title: "Summary"
+  note: "Deltas compare against run #481 (2026-08-19 09:14 UTC). Green means the metric moved the right way."
+  kpis:
+    - id: "open_pull_requests"
+      label: "Open pull requests"
+      unit: "PRs"
+      lower_is_better: true
+      value: 5
+      display: "5"
+      series:
+        - 9
+        - 11
+        - 10
+        - 8
+        - 7
+        - 6
+        - 6
+        - 5
+      delta:
+        value: -1
+        display: "-1 vs #481"
+        direction: "better"
+    - id: "average_pr_age"
+      label: "Average PR age"
+      unit: "hours"
+      lower_is_better: true
+      value: 38
+      display: "38"
+      series:
+        - 44
+        - 41
+        - 39
+        - 42
+        - 40
+        - 39
+        - 41
+        - 38
+      delta:
+        value: -3
+        display: "-3 vs #481"
+        direction: "better"
+    - id: "prs_over_threshold"
+      label: "PRs over 48h"
+      unit: "of 5"
+      lower_is_better: true
+      value: 2
+      display: "2"
+      series:
+        - 6
+        - 5
+        - 5
+        - 4
+        - 4
+        - 3
+        - 3
+        - 2
+      delta:
+        value: -1
+        display: "-1 vs #481"
+        direction: "better"
+    - id: "pipeline_success"
+      label: "Pipeline success"
+      unit: "%"
+      lower_is_better: false
+      value: 67
+      display: "67"
+      series:
+        - 78
+        - 80
+        - 79
+        - 83
+        - 82
+        - 71
+        - 69
+        - 67
+      delta:
+        value: -2
+        display: "-2 vs #481"
+        direction: "worse"
+    - id: "open_tech_debt"
+      label: "Open Jira items"
+      unit: "tickets"
+      lower_is_better: true
+      value: 7
+      display: "7"
+      series:
+        - 4
+        - 5
+        - 5
+        - 6
+        - 6
+        - 7
+        - 6
+        - 7
+      delta:
+        value: 1
+        display: "+1 vs #481"
+        direction: "worse"
+evolution:
+  id: "evolution"
+  index: "02"
+  title: "Evolution"
+  enabled: true
+  range_display: "last 8 runs · runs #475 → #482"
+  legend:
+    - label: "bars = one run, oldest left"
+      direction: null
+    - label: "improving"
+      direction: "better"
+    - label: "worsening"
+      direction: "worse"
+    - label: "flat"
+      direction: "flat"
+  trends:
+    - id: "average_pr_age"
+      name: "Average PR age"
+      hint: "hours open"
+      unit: "h"
+      lower_is_better: true
+      series:
+        - 44
+        - 41
+        - 39
+        - 42
+        - 40
+        - 39
+        - 41
+        - 38
+      current:
+        value: 38
+        display: "38h"
+      delta:
+        value: -3
+        display: "-3h"
+        direction: "better"
+    - id: "open_pull_requests"
+      name: "PRs open at run time"
+      hint: "across 3 repositories"
+      unit: ""
+      lower_is_better: true
+      series:
+        - 9
+        - 11
+        - 10
+        - 8
+        - 7
+        - 6
+        - 6
+        - 5
+      current:
+        value: 5
+        display: "5"
+      delta:
+        value: -1
+        display: "-1"
+        direction: "better"
+    - id: "review_turnaround"
+      name: "Review turnaround"
+      hint: "hours to first review"
+      unit: "h"
+      lower_is_better: true
+      series:
+        - 22
+        - 21
+        - 19
+        - 18
+        - 17
+        - 16
+        - 15
+        - 14
+      current:
+        value: 14
+        display: "14h"
+      delta:
+        value: -1
+        display: "-1h"
+        direction: "better"
+    - id: "pipeline_success"
+      name: "Pipeline success rate"
+      hint: "passed / completed pipelines"
+      unit: "%"
+      lower_is_better: false
+      series:
+        - 78
+        - 80
+        - 79
+        - 83
+        - 82
+        - 71
+        - 69
+        - 67
+      current:
+        value: 67
+        display: "67%"
+      delta:
+        value: -2
+        display: "-2%"
+        direction: "worse"
+    - id: "pipeline_duration"
+      name: "Pipeline duration"
+      hint: "median, minutes"
+      unit: "m"
+      lower_is_better: true
+      series:
+        - 10
+        - 10
+        - 9
+        - 9
+        - 8
+        - 7
+        - 7
+        - 6
+      current:
+        value: 6
+        display: "6m"
+      delta:
+        value: -1
+        display: "-1m"
+        direction: "better"
+    - id: "jira_backlog"
+      name: "Jira backlog"
+      hint: "open across 3 summaries"
+      unit: ""
+      lower_is_better: true
+      series:
+        - 4
+        - 5
+        - 5
+        - 6
+        - 6
+        - 7
+        - 6
+        - 7
+      current:
+        value: 7
+        display: "7"
+      delta:
+        value: 1
+        display: "+1"
+        direction: "worse"
+pull_requests:
+  id: "pullrequests"
+  index: "03"
+  title: "Pull Requests Flow"
+  state: "OPEN"
+  headline:
+    display: "Average PR age 38h · 5 open · 2 over the 48h threshold · oldest 71h"
+    average_age_hours: 38
+    open_count: 5
+    over_threshold_count: 2
+    oldest_age_hours: 71
+  age_indicators:
+    - slug: "ok"
+      rule: "< 24"
+      label: "ok < 24h"
+      color: "#3E7C4F"
+    - slug: "warning"
+      rule: "< 48"
+      label: "warning < 48h"
+      color: "#B68235"
+    - slug: "problem"
+      rule: "> 48"
+      label: "problem > 48h"
+      color: "#B3402F"
+  columns:
+    - key: "repository"
+      label: "Repository"
+      align: "left"
+      sortable: true
+    - key: "title"
+      label: "Pull request"
+      align: "left"
+      sortable: true
+    - key: "author"
+      label: "Author"
+      align: "left"
+      sortable: true
+    - key: "age"
+      label: "Age"
+      align: "right"
+      sortable: true
+    - key: "changes"
+      label: "Changes"
+      align: "right"
+      sortable: true
+    - key: "commits"
+      label: "Commits"
+      align: "right"
+      sortable: true
+    - key: "reviewers"
+      label: "Reviewers"
+      align: "left"
+      sortable: false
+    - key: "expand"
+      label: ""
+      align: "right"
+      sortable: false
+  default_sort:
+    key: "age"
+    direction: "desc"
+  items:
+    - id: "project_backend#412"
+      repository: "PROJECT Backend"
+      repository_slug: "project_backend"
+      integration: "bitbucket_acme"
+      number: 412
+      title: "Parcel dedup on intake queue"
+      url: "https://bitbucket.org/ACMEintl/project_backend/pull-requests/412"
+      state: "OPEN"
+      author:
+        name: "a.ruiz"
+        display_name: "Ana Ruiz"
+      created_at: "2026-08-17T10:14:02Z"
+      created_display: "2026-08-17 12:14"
+      updated_at: "2026-08-17T10:14:02Z"
+      age_hours: 71
+      age_display: "71h"
+      age_indicator: "problem"
+      source_branch: "feature/intake-dedup"
+      destination_branch: "develop"
+      branches_display: "feature/intake-dedup → develop"
+      changes:
+        files: 18
+        lines_added: 512
+        lines_removed: 130
+        lines_total: 642
+        display: "18f · 642l"
+        detail_display: "18 files · +512 / −130"
+      comments:
+        total: 11
+        unresolved: 2
+        display: "11 · 2 unresolved threads"
+      blocking:
+        state: "changes_requested"
+        indicator: "problem"
+        display: "changes requested by s.peeters"
+      reviewers:
+        - name: "m.dupont"
+          state: "approved"
+          label: "m.dupont approved"
+          indicator: "ok"
+          updated_at: "2026-08-18T08:02:00Z"
+        - name: "s.peeters"
+          state: "changes_requested"
+          label: "s.peeters changes"
+          indicator: "problem"
+          updated_at: "2026-08-19T09:41:00Z"
+      commits:
+        - sha: "9f2c1ab"
+          message: "add dedup index on tracking_id"
+          author: "a.ruiz"
+          committed_at: "2026-08-17T10:20:00Z"
+          when_display: "3d ago"
+        - sha: "4b81de0"
+          message: "guard against null carrier code"
+          author: "a.ruiz"
+          committed_at: "2026-08-18T07:55:00Z"
+          when_display: "2d ago"
+        - sha: "c07aa39"
+          message: "unit tests for dedup window"
+          author: "a.ruiz"
+          committed_at: "2026-08-18T13:10:00Z"
+          when_display: "2d ago"
+        - sha: "e19b4f5"
+          message: "address review: extract policy class"
+          author: "a.ruiz"
+          committed_at: "2026-08-19T14:20:00Z"
+          when_display: "18h ago"
+      facts:
+        - key: "Created"
+          value: "2026-08-17 12:14 · 71h open"
+          indicator: "problem"
+        - key: "Files changed"
+          value: "18 files · +512 / −130"
+          indicator: "neutral"
+        - key: "Comments"
+          value: "11 · 2 unresolved threads"
+          indicator: "warning"
+        - key: "Blocking"
+          value: "changes requested by s.peeters"
+          indicator: "problem"
+    - id: "project_frontend#288"
+      repository: "PROJECT Frontend"
+      repository_slug: "project_frontend"
+      integration: "bitbucket_acme"
+      number: 288
+      title: "Shipment detail: status timeline"
+      url: "https://bitbucket.org/ACMEintl/project_frontend/pull-requests/288"
+      state: "OPEN"
+      author:
+        name: "l.martens"
+        display_name: "Lore Martens"
+      created_at: "2026-08-18T05:14:02Z"
+      created_display: "2026-08-18 07:14"
+      updated_at: "2026-08-18T05:14:02Z"
+      age_hours: 52
+      age_display: "52h"
+      age_indicator: "problem"
+      source_branch: "feature/status-timeline"
+      destination_branch: "develop"
+      branches_display: "feature/status-timeline → develop"
+      changes:
+        files: 24
+        lines_added: 801
+        lines_removed: 117
+        lines_total: 918
+        display: "24f · 918l"
+        detail_display: "24 files · +801 / −117"
+      comments:
+        total: 4
+        unresolved: 0
+        display: "4 · all resolved"
+      blocking:
+        state: "awaiting_review"
+        indicator: "warning"
+        display: "awaiting first review"
+      reviewers:
+        - name: "a.ruiz"
+          state: "pending"
+          label: "a.ruiz pending"
+          indicator: "warning"
+          updated_at: null
+      commits:
+        - sha: "7d3e991"
+          message: "timeline component scaffold"
+          author: "l.martens"
+          committed_at: "2026-08-18T05:20:00Z"
+          when_display: "2d ago"
+        - sha: "b2f0c14"
+          message: "wire status history endpoint"
+          author: "l.martens"
+          committed_at: "2026-08-18T11:44:00Z"
+          when_display: "2d ago"
+        - sha: "5ac6207"
+          message: "responsive lane collapse"
+          author: "l.martens"
+          committed_at: "2026-08-19T16:02:00Z"
+          when_display: "17h ago"
+      facts:
+        - key: "Created"
+          value: "2026-08-18 07:14 · 52h open"
+          indicator: "problem"
+        - key: "Files changed"
+          value: "24 files · +801 / −117"
+          indicator: "neutral"
+        - key: "Comments"
+          value: "4 · all resolved"
+          indicator: "neutral"
+        - key: "Blocking"
+          value: "awaiting first review"
+          indicator: "warning"
+    - id: "project_backend#415"
+      repository: "PROJECT Backend"
+      repository_slug: "project_backend"
+      integration: "bitbucket_acme"
+      number: 415
+      title: "Retry policy for carrier webhooks"
+      url: "https://bitbucket.org/ACMEintl/project_backend/pull-requests/415"
+      state: "OPEN"
+      author:
+        name: "s.peeters"
+        display_name: "Sam Peeters"
+      created_at: "2026-08-18T16:14:02Z"
+      created_display: "2026-08-18 18:14"
+      updated_at: "2026-08-18T16:14:02Z"
+      age_hours: 41
+      age_display: "41h"
+      age_indicator: "warning"
+      source_branch: "fix/webhook-retry"
+      destination_branch: "develop"
+      branches_display: "fix/webhook-retry → develop"
+      changes:
+        files: 7
+        lines_added: 186
+        lines_removed: 28
+        lines_total: 214
+        display: "7f · 214l"
+        detail_display: "7 files · +186 / −28"
+      comments:
+        total: 6
+        unresolved: 1
+        display: "6 · 1 unresolved thread"
+      blocking:
+        state: "review_missing"
+        indicator: "warning"
+        display: "one review missing"
+      reviewers:
+        - name: "a.ruiz"
+          state: "approved"
+          label: "a.ruiz approved"
+          indicator: "ok"
+          updated_at: "2026-08-19T08:15:00Z"
+        - name: "j.claes"
+          state: "pending"
+          label: "j.claes pending"
+          indicator: "warning"
+          updated_at: null
+      commits:
+        - sha: "1c9df70"
+          message: "exponential backoff with jitter"
+          author: "s.peeters"
+          committed_at: "2026-08-18T16:20:00Z"
+          when_display: "2d ago"
+        - sha: "a8e2b31"
+          message: "cap retries at 6 attempts"
+          author: "s.peeters"
+          committed_at: "2026-08-19T18:30:00Z"
+          when_display: "14h ago"
+      facts:
+        - key: "Created"
+          value: "2026-08-18 18:14 · 41h open"
+          indicator: "warning"
+        - key: "Files changed"
+          value: "7 files · +186 / −28"
+          indicator: "neutral"
+        - key: "Comments"
+          value: "6 · 1 unresolved thread"
+          indicator: "warning"
+        - key: "Blocking"
+          value: "one review missing"
+          indicator: "warning"
+    - id: "project_infra#97"
+      repository: "PROJECT Infra"
+      repository_slug: "project_infra"
+      integration: "bitbucket_acme"
+      number: 97
+      title: "Split staging pipeline into two stages"
+      url: "https://bitbucket.org/ACMEintl/project_infra/pull-requests/97"
+      state: "OPEN"
+      author:
+        name: "j.claes"
+        display_name: "Jonas Claes"
+      created_at: "2026-08-19T14:14:02Z"
+      created_display: "2026-08-19 16:14"
+      updated_at: "2026-08-19T14:14:02Z"
+      age_hours: 19
+      age_display: "19h"
+      age_indicator: "ok"
+      source_branch: "chore/pipeline-split"
+      destination_branch: "main"
+      branches_display: "chore/pipeline-split → main"
+      changes:
+        files: 4
+        lines_added: 82
+        lines_removed: 14
+        lines_total: 96
+        display: "4f · 96l"
+        detail_display: "4 files · +82 / −14"
+      comments:
+        total: 2
+        unresolved: 0
+        display: "2 · all resolved"
+      blocking:
+        state: "none"
+        indicator: "ok"
+        display: "nothing — ready to merge"
+      reviewers:
+        - name: "m.dupont"
+          state: "approved"
+          label: "m.dupont approved"
+          indicator: "ok"
+          updated_at: "2026-08-19T17:05:00Z"
+      commits:
+        - sha: "3fa0c58"
+          message: "extract build stage"
+          author: "j.claes"
+          committed_at: "2026-08-19T14:14:00Z"
+          when_display: "19h ago"
+        - sha: "9b17e4c"
+          message: "cache node_modules between stages"
+          author: "j.claes"
+          committed_at: "2026-08-19T15:30:00Z"
+          when_display: "17h ago"
+      facts:
+        - key: "Created"
+          value: "2026-08-19 16:14 · 19h open"
+          indicator: "ok"
+        - key: "Files changed"
+          value: "4 files · +82 / −14"
+          indicator: "neutral"
+        - key: "Comments"
+          value: "2 · all resolved"
+          indicator: "neutral"
+        - key: "Blocking"
+          value: "nothing — ready to merge"
+          indicator: "ok"
+    - id: "project_frontend#291"
+      repository: "PROJECT Frontend"
+      repository_slug: "project_frontend"
+      integration: "bitbucket_acme"
+      number: 291
+      title: "Fix locale fallback on tracking page"
+      url: "https://bitbucket.org/ACMEintl/project_frontend/pull-requests/291"
+      state: "OPEN"
+      author:
+        name: "m.dupont"
+        display_name: "Marie Dupont"
+      created_at: "2026-08-20T03:14:02Z"
+      created_display: "2026-08-20 05:14"
+      updated_at: "2026-08-20T03:14:02Z"
+      age_hours: 6
+      age_display: "6h"
+      age_indicator: "ok"
+      source_branch: "fix/locale-fallback"
+      destination_branch: "develop"
+      branches_display: "fix/locale-fallback → develop"
+      changes:
+        files: 3
+        lines_added: 39
+        lines_removed: 8
+        lines_total: 47
+        display: "3f · 47l"
+        detail_display: "3 files · +39 / −8"
+      comments:
+        total: 0
+        unresolved: 0
+        display: "0"
+      blocking:
+        state: "awaiting_review"
+        indicator: "warning"
+        display: "awaiting first review"
+      reviewers:
+        - name: "l.martens"
+          state: "pending"
+          label: "l.martens pending"
+          indicator: "warning"
+          updated_at: null
+      commits:
+        - sha: "62c4d18"
+          message: "fallback to nl-BE when locale missing"
+          author: "m.dupont"
+          committed_at: "2026-08-20T03:20:00Z"
+          when_display: "5h ago"
+      facts:
+        - key: "Created"
+          value: "2026-08-20 05:14 · 6h open"
+          indicator: "ok"
+        - key: "Files changed"
+          value: "3 files · +39 / −8"
+          indicator: "neutral"
+        - key: "Comments"
+          value: "0"
+          indicator: "neutral"
+        - key: "Blocking"
+          value: "awaiting first review"
+          indicator: "warning"
+cicd:
+  id: "cicd"
+  index: "04"
+  title: "CICD Flow"
+  headline:
+    display: "6 pipelines in the last 24h · 4 passed · 2 failed · median duration 6m"
+    window_hours: 24
+    total: 6
+    passed: 4
+    failed: 2
+    stopped: 0
+    running: 0
+    success_rate: 67
+    median_duration_seconds: 365
+    median_duration_display: "6m"
+  columns:
+    - key: "repository"
+      label: "Repository"
+      align: "left"
+    - key: "name"
+      label: "Pipeline / branch"
+      align: "left"
+    - key: "triggered_by"
+      label: "Triggered by"
+      align: "left"
+    - key: "when"
+      label: "When"
+      align: "left"
+    - key: "duration"
+      label: "Duration"
+      align: "right"
+    - key: "outcome"
+      label: "Outcome"
+      align: "left"
+    - key: "steps"
+      label: "Steps"
+      align: "left"
+  step_outcomes:
+    passed:
+      indicator: "ok"
+    failed:
+      indicator: "problem"
+    skipped:
+      indicator: "neutral"
+    running:
+      indicator: "warning"
+  items:
+    - id: "project_backend#5521"
+      repository: "PROJECT Backend"
+      repository_slug: "project_backend"
+      integration: "bitbucket_acme"
+      number: 5521
+      name: "backend · build & deploy"
+      branch: "develop"
+      commit: "a71ce09"
+      triggered_by: "a.ruiz"
+      trigger_type: "push"
+      created_at: "2026-08-20T07:14:02Z"
+      when_display: "2h ago"
+      duration_seconds: 700
+      duration_display: "11m 40s"
+      outcome: "FAILED"
+      outcome_indicator: "problem"
+      url: "https://bitbucket.org/ACMEintl/project_backend/pipelines/results/5521"
+      note:
+        display: "failed: integration-tests · skipped: package, deploy-staging"
+        indicator: "problem"
+      failed_steps:
+        - "integration-tests"
+      skipped_steps:
+        - "package"
+        - "deploy-staging"
+      steps:
+        - name: "install"
+          outcome: "passed"
+          duration_seconds: 48
+        - name: "lint"
+          outcome: "passed"
+          duration_seconds: 61
+        - name: "unit-tests"
+          outcome: "passed"
+          duration_seconds: 274
+        - name: "integration-tests"
+          outcome: "failed"
+          duration_seconds: 317
+        - name: "package"
+          outcome: "skipped"
+          duration_seconds: 0
+        - name: "deploy-staging"
+          outcome: "skipped"
+          duration_seconds: 0
+    - id: "project_backend#5520"
+      repository: "PROJECT Backend"
+      repository_slug: "project_backend"
+      integration: "bitbucket_acme"
+      number: 5520
+      name: "backend · build & deploy"
+      branch: "feature/intake-dedup"
+      commit: "e19b4f5"
+      triggered_by: "s.peeters"
+      trigger_type: "push"
+      created_at: "2026-08-20T04:14:02Z"
+      when_display: "5h ago"
+      duration_seconds: 542
+      duration_display: "9m 02s"
+      outcome: "PASSED"
+      outcome_indicator: "ok"
+      url: "https://bitbucket.org/ACMEintl/project_backend/pipelines/results/5520"
+      note:
+        display: "all 6 steps passed"
+        indicator: "neutral"
+      failed_steps: []
+      skipped_steps: []
+      steps:
+        - name: "install"
+          outcome: "passed"
+          duration_seconds: 44
+        - name: "lint"
+          outcome: "passed"
+          duration_seconds: 55
+        - name: "unit-tests"
+          outcome: "passed"
+          duration_seconds: 208
+        - name: "integration-tests"
+          outcome: "passed"
+          duration_seconds: 149
+        - name: "package"
+          outcome: "passed"
+          duration_seconds: 51
+        - name: "deploy-staging"
+          outcome: "passed"
+          duration_seconds: 35
+    - id: "project_frontend#3310"
+      repository: "PROJECT Frontend"
+      repository_slug: "project_frontend"
+      integration: "bitbucket_acme"
+      number: 3310
+      name: "frontend · ci"
+      branch: "develop"
+      commit: "5ac6207"
+      triggered_by: "l.martens"
+      trigger_type: "push"
+      created_at: "2026-08-20T03:14:02Z"
+      when_display: "6h ago"
+      duration_seconds: 378
+      duration_display: "6m 18s"
+      outcome: "PASSED"
+      outcome_indicator: "ok"
+      url: "https://bitbucket.org/ACMEintl/project_frontend/pipelines/results/3310"
+      note:
+        display: "skipped: visual-diff"
+        indicator: "neutral"
+      failed_steps: []
+      skipped_steps:
+        - "visual-diff"
+      steps:
+        - name: "install"
+          outcome: "passed"
+          duration_seconds: 62
+        - name: "lint"
+          outcome: "passed"
+          duration_seconds: 40
+        - name: "unit-tests"
+          outcome: "passed"
+          duration_seconds: 151
+        - name: "build"
+          outcome: "passed"
+          duration_seconds: 125
+        - name: "visual-diff"
+          outcome: "skipped"
+          duration_seconds: 0
+    - id: "project_frontend#3309"
+      repository: "PROJECT Frontend"
+      repository_slug: "project_frontend"
+      integration: "bitbucket_acme"
+      number: 3309
+      name: "frontend · ci"
+      branch: "fix/locale-fallback"
+      commit: "62c4d18"
+      triggered_by: "m.dupont"
+      trigger_type: "push"
+      created_at: "2026-08-20T02:14:02Z"
+      when_display: "7h ago"
+      duration_seconds: 351
+      duration_display: "5m 51s"
+      outcome: "FAILED"
+      outcome_indicator: "problem"
+      url: "https://bitbucket.org/ACMEintl/project_frontend/pipelines/results/3309"
+      note:
+        display: "failed: lint · skipped: unit-tests, build, visual-diff"
+        indicator: "problem"
+      failed_steps:
+        - "lint"
+      skipped_steps:
+        - "unit-tests"
+        - "build"
+        - "visual-diff"
+      steps:
+        - name: "install"
+          outcome: "passed"
+          duration_seconds: 58
+        - name: "lint"
+          outcome: "failed"
+          duration_seconds: 293
+        - name: "unit-tests"
+          outcome: "skipped"
+          duration_seconds: 0
+        - name: "build"
+          outcome: "skipped"
+          duration_seconds: 0
+        - name: "visual-diff"
+          outcome: "skipped"
+          duration_seconds: 0
+    - id: "project_infra#1204"
+      repository: "PROJECT Infra"
+      repository_slug: "project_infra"
+      integration: "bitbucket_acme"
+      number: 1204
+      name: "infra · terraform plan"
+      branch: "main"
+      commit: "9b17e4c"
+      triggered_by: "j.claes"
+      trigger_type: "push"
+      created_at: "2026-08-20T00:14:02Z"
+      when_display: "9h ago"
+      duration_seconds: 207
+      duration_display: "3m 27s"
+      outcome: "PASSED"
+      outcome_indicator: "ok"
+      url: "https://bitbucket.org/ACMEintl/project_infra/pipelines/results/1204"
+      note:
+        display: "all 4 steps passed"
+        indicator: "neutral"
+      failed_steps: []
+      skipped_steps: []
+      steps:
+        - name: "init"
+          outcome: "passed"
+          duration_seconds: 21
+        - name: "validate"
+          outcome: "passed"
+          duration_seconds: 18
+        - name: "plan"
+          outcome: "passed"
+          duration_seconds: 132
+        - name: "policy-check"
+          outcome: "passed"
+          duration_seconds: 36
+    - id: "project_infra#1203"
+      repository: "PROJECT Infra"
+      repository_slug: "project_infra"
+      integration: "bitbucket_acme"
+      number: 1203
+      name: "infra · nightly drift"
+      branch: "main"
+      commit: "3fa0c58"
+      triggered_by: "scheduler"
+      trigger_type: "schedule"
+      created_at: "2026-08-19T19:14:02Z"
+      when_display: "14h ago"
+      duration_seconds: 124
+      duration_display: "2m 04s"
+      outcome: "PASSED"
+      outcome_indicator: "ok"
+      url: "https://bitbucket.org/ACMEintl/project_infra/pipelines/results/1203"
+      note:
+        display: "all 3 steps passed"
+        indicator: "neutral"
+      failed_steps: []
+      skipped_steps: []
+      steps:
+        - name: "init"
+          outcome: "passed"
+          duration_seconds: 19
+        - name: "refresh"
+          outcome: "passed"
+          duration_seconds: 71
+        - name: "drift-report"
+          outcome: "passed"
+          duration_seconds: 34
+testing:
+  id: "testing"
+  index: "05"
+  title: "Testing report"
+  status: "empty"
+  placeholder:
+    message: "No test data collected in this run."
+    hint: "Section reserved — configure a testing integration in config.yaml"
+  suites: []
+jira_summaries:
+  id: "jira"
+  index: "06"
+  title: "Jira summaries"
+  search:
+    enabled: true
+    placeholder: "Search tickets…"
+    fields:
+      - "key"
+      - "title"
+      - "status"
+      - "meta_display"
+      - "description"
+  totals:
+    tickets: 7
+    summaries: 3
+    display: "7 tickets across 3 summaries"
+  timeline:
+    statuses:
+      - "To Do"
+      - "In Progress"
+      - "Code Review"
+      - "QA"
+      - "Done"
+    heavy_share: 0.35
+    empty_display: "—"
+  types:
+    Debt:
+      indicator: "warning"
+    Bug:
+      indicator: "problem"
+    Task:
+      indicator: "neutral"
+  items:
+    - slug: "tech-debt-cloud"
+      title: "Technical debt @ Cloud"
+      jql: "project = PROJECT AND labels = tech-debt AND component = Cloud AND statusCategory != Done"
+      integration: "jira_ACMEintl"
+      count: 3
+      count_display: "3 tickets"
+      series:
+        - 1
+        - 2
+        - 2
+        - 3
+        - 3
+        - 3
+        - 3
+        - 3
+      empty_display: "No tickets match the search."
+      tickets:
+        - key: "PROJECT-1841"
+          type: "Debt"
+          title: "Replace deprecated S3 SDK v2 calls"
+          url: "https://ACMEintl.atlassian.net/browse/PROJECT-1841"
+          description: "The storage adapter still uses SDK v2 clients, which no longer receive security patches. Migration touches parcel-label rendering and the archive export job."
+          status: "Code Review"
+          status_category: "in_progress"
+          assignee: "m.dupont"
+          reporter: "a.ruiz"
+          created_at: "2026-08-08T09:14:02Z"
+          updated_at: "2026-08-16T09:14:02Z"
+          resolved_at: null
+          meta_display: "m.dupont · opened 12d ago"
+          timeline:
+            start: "2026-08-08T09:14:02.000Z"
+            end: "2026-08-20T09:14:02.000Z"
+            axis_start_display: "2026-08-08"
+            axis_end_display: "2026-08-20"
+            total_hours: 288
+            lanes:
+              - status: "To Do"
+                hours: 72
+                time_display: "3d"
+                share: 0.25
+                emphasis: "normal"
+                who: "unassigned"
+                segments:
+                  - start_hours: 0
+                    duration_hours: 72
+                    who: "unassigned"
+                    entered_at: "2026-08-08T09:14:02.000Z"
+                    left_at: "2026-08-11T09:14:02.000Z"
+                    title: "To Do · 72h · unassigned"
+              - status: "In Progress"
+                hours: 120
+                time_display: "5d"
+                share: 0.4167
+                emphasis: "heavy"
+                who: "a.ruiz"
+                segments:
+                  - start_hours: 72
+                    duration_hours: 120
+                    who: "a.ruiz"
+                    entered_at: "2026-08-11T09:14:02.000Z"
+                    left_at: "2026-08-16T09:14:02.000Z"
+                    title: "In Progress · 120h · a.ruiz"
+              - status: "Code Review"
+                hours: 96
+                time_display: "4d"
+                share: 0.3333
+                emphasis: "normal"
+                who: "m.dupont"
+                segments:
+                  - start_hours: 192
+                    duration_hours: 96
+                    who: "m.dupont"
+                    entered_at: "2026-08-16T09:14:02.000Z"
+                    left_at: "2026-08-20T09:14:02.000Z"
+                    title: "Code Review · 96h · m.dupont"
+              - status: "QA"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+              - status: "Done"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+        - key: "PROJECT-1907"
+          type: "Debt"
+          title: "Consolidate three logging formats into one"
+          url: "https://ACMEintl.atlassian.net/browse/PROJECT-1907"
+          description: "Backend, worker and infra emit different log shapes, so a single request cannot be followed across services. Target is one structured JSON envelope."
+          status: "In Progress"
+          status_category: "in_progress"
+          assignee: "j.claes"
+          reporter: "a.ruiz"
+          created_at: "2026-08-12T09:14:02Z"
+          updated_at: "2026-08-16T09:14:02Z"
+          resolved_at: null
+          meta_display: "j.claes · opened 8d ago"
+          timeline:
+            start: "2026-08-12T09:14:02.000Z"
+            end: "2026-08-20T09:14:02.000Z"
+            axis_start_display: "2026-08-12"
+            axis_end_display: "2026-08-20"
+            total_hours: 192
+            lanes:
+              - status: "To Do"
+                hours: 96
+                time_display: "4d"
+                share: 0.5
+                emphasis: "heavy"
+                who: "unassigned"
+                segments:
+                  - start_hours: 0
+                    duration_hours: 96
+                    who: "unassigned"
+                    entered_at: "2026-08-12T09:14:02.000Z"
+                    left_at: "2026-08-16T09:14:02.000Z"
+                    title: "To Do · 96h · unassigned"
+              - status: "In Progress"
+                hours: 96
+                time_display: "4d"
+                share: 0.5
+                emphasis: "heavy"
+                who: "j.claes"
+                segments:
+                  - start_hours: 96
+                    duration_hours: 96
+                    who: "j.claes"
+                    entered_at: "2026-08-16T09:14:02.000Z"
+                    left_at: "2026-08-20T09:14:02.000Z"
+                    title: "In Progress · 96h · j.claes"
+              - status: "Code Review"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+              - status: "QA"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+              - status: "Done"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+        - key: "PROJECT-1788"
+          type: "Bug"
+          title: "Intake worker leaks DB connections under retry"
+          url: "https://ACMEintl.atlassian.net/browse/PROJECT-1788"
+          description: "Connections are not returned to the pool when a carrier webhook retries within the same transaction window, exhausting the pool after roughly six hours of load."
+          status: "QA"
+          status_category: "in_progress"
+          assignee: "l.martens"
+          reporter: "s.peeters"
+          created_at: "2026-07-30T09:14:02Z"
+          updated_at: "2026-08-15T09:14:02Z"
+          resolved_at: null
+          meta_display: "l.martens · opened 21d ago"
+          timeline:
+            start: "2026-07-30T09:14:02.000Z"
+            end: "2026-08-20T09:14:02.000Z"
+            axis_start_display: "2026-07-30"
+            axis_end_display: "2026-08-20"
+            total_hours: 504
+            lanes:
+              - status: "To Do"
+                hours: 144
+                time_display: "6d"
+                share: 0.2857
+                emphasis: "normal"
+                who: "unassigned"
+                segments:
+                  - start_hours: 0
+                    duration_hours: 144
+                    who: "unassigned"
+                    entered_at: "2026-07-30T09:14:02.000Z"
+                    left_at: "2026-08-05T09:14:02.000Z"
+                    title: "To Do · 144h · unassigned"
+              - status: "In Progress"
+                hours: 168
+                time_display: "7d"
+                share: 0.3333
+                emphasis: "normal"
+                who: "s.peeters"
+                segments:
+                  - start_hours: 144
+                    duration_hours: 168
+                    who: "s.peeters"
+                    entered_at: "2026-08-05T09:14:02.000Z"
+                    left_at: "2026-08-12T09:14:02.000Z"
+                    title: "In Progress · 168h · s.peeters"
+              - status: "Code Review"
+                hours: 72
+                time_display: "3d"
+                share: 0.1429
+                emphasis: "normal"
+                who: "a.ruiz"
+                segments:
+                  - start_hours: 312
+                    duration_hours: 72
+                    who: "a.ruiz"
+                    entered_at: "2026-08-12T09:14:02.000Z"
+                    left_at: "2026-08-15T09:14:02.000Z"
+                    title: "Code Review · 72h · a.ruiz"
+              - status: "QA"
+                hours: 120
+                time_display: "5d"
+                share: 0.2381
+                emphasis: "normal"
+                who: "l.martens"
+                segments:
+                  - start_hours: 384
+                    duration_hours: 120
+                    who: "l.martens"
+                    entered_at: "2026-08-15T09:14:02.000Z"
+                    left_at: "2026-08-20T09:14:02.000Z"
+                    title: "QA · 120h · l.martens"
+              - status: "Done"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+    - slug: "tech-debt-physical"
+      title: "Technical debt @ Physical"
+      jql: "project = PROJECT AND labels = tech-debt AND component = Physical AND statusCategory != Done"
+      integration: "jira_ACMEintl"
+      count: 2
+      count_display: "2 tickets"
+      series:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 2
+        - 2
+        - 1
+        - 2
+      empty_display: "No tickets match the search."
+      tickets:
+        - key: "PROJECT-1655"
+          type: "Debt"
+          title: "Scanner firmware compatibility matrix untested"
+          url: "https://ACMEintl.atlassian.net/browse/PROJECT-1655"
+          description: "Three depot scanner models run firmware the pipeline never exercises, so label parsing regressions only surface on site."
+          status: "To Do"
+          status_category: "to_do"
+          assignee: null
+          reporter: "j.claes"
+          created_at: "2026-07-17T09:14:02Z"
+          updated_at: "2026-07-17T09:14:02Z"
+          resolved_at: null
+          meta_display: "unassigned · opened 34d ago"
+          timeline:
+            start: "2026-07-17T09:14:02.000Z"
+            end: "2026-08-20T09:14:02.000Z"
+            axis_start_display: "2026-07-17"
+            axis_end_display: "2026-08-20"
+            total_hours: 816
+            lanes:
+              - status: "To Do"
+                hours: 816
+                time_display: "34d"
+                share: 1
+                emphasis: "heavy"
+                who: "unassigned"
+                segments:
+                  - start_hours: 0
+                    duration_hours: 816
+                    who: "unassigned"
+                    entered_at: "2026-07-17T09:14:02.000Z"
+                    left_at: "2026-08-20T09:14:02.000Z"
+                    title: "To Do · 816h · unassigned"
+              - status: "In Progress"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+              - status: "Code Review"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+              - status: "QA"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+              - status: "Done"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+        - key: "PROJECT-1902"
+          type: "Task"
+          title: "Extract sorting-belt adapter from monolith"
+          url: "https://ACMEintl.atlassian.net/browse/PROJECT-1902"
+          description: "The belt controller protocol is embedded in the intake service, which blocks independent deploys of the depot integration."
+          status: "In Progress"
+          status_category: "in_progress"
+          assignee: "m.dupont"
+          reporter: "j.claes"
+          created_at: "2026-08-11T09:14:02Z"
+          updated_at: "2026-08-13T09:14:02Z"
+          resolved_at: null
+          meta_display: "m.dupont · opened 9d ago"
+          timeline:
+            start: "2026-08-11T09:14:02.000Z"
+            end: "2026-08-20T09:14:02.000Z"
+            axis_start_display: "2026-08-11"
+            axis_end_display: "2026-08-20"
+            total_hours: 216
+            lanes:
+              - status: "To Do"
+                hours: 48
+                time_display: "2d"
+                share: 0.2222
+                emphasis: "normal"
+                who: "unassigned"
+                segments:
+                  - start_hours: 0
+                    duration_hours: 48
+                    who: "unassigned"
+                    entered_at: "2026-08-11T09:14:02.000Z"
+                    left_at: "2026-08-13T09:14:02.000Z"
+                    title: "To Do · 48h · unassigned"
+              - status: "In Progress"
+                hours: 168
+                time_display: "7d"
+                share: 0.7778
+                emphasis: "heavy"
+                who: "m.dupont"
+                segments:
+                  - start_hours: 48
+                    duration_hours: 168
+                    who: "m.dupont"
+                    entered_at: "2026-08-13T09:14:02.000Z"
+                    left_at: "2026-08-20T09:14:02.000Z"
+                    title: "In Progress · 168h · m.dupont"
+              - status: "Code Review"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+              - status: "QA"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+              - status: "Done"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+    - slug: "tech-debt-infra"
+      title: "Technical debt @ Infra"
+      jql: "project = PROJECT AND labels = tech-debt AND component = Infra"
+      integration: "jira_ACMEintl"
+      count: 2
+      count_display: "2 tickets"
+      series:
+        - 2
+        - 2
+        - 2
+        - 2
+        - 1
+        - 2
+        - 2
+        - 2
+      empty_display: "No tickets match the search."
+      tickets:
+        - key: "PROJECT-1873"
+          type: "Debt"
+          title: "Terraform state split per environment"
+          url: "https://ACMEintl.atlassian.net/browse/PROJECT-1873"
+          description: "Staging and production share one state file, so any plan locks both environments and a mistaken apply can cross the boundary."
+          status: "Code Review"
+          status_category: "in_progress"
+          assignee: "s.peeters"
+          reporter: "j.claes"
+          created_at: "2026-08-05T09:14:02Z"
+          updated_at: "2026-08-15T09:14:02Z"
+          resolved_at: null
+          meta_display: "s.peeters · opened 15d ago"
+          timeline:
+            start: "2026-08-05T09:14:02.000Z"
+            end: "2026-08-20T09:14:02.000Z"
+            axis_start_display: "2026-08-05"
+            axis_end_display: "2026-08-20"
+            total_hours: 360
+            lanes:
+              - status: "To Do"
+                hours: 96
+                time_display: "4d"
+                share: 0.2667
+                emphasis: "normal"
+                who: "unassigned"
+                segments:
+                  - start_hours: 0
+                    duration_hours: 96
+                    who: "unassigned"
+                    entered_at: "2026-08-05T09:14:02.000Z"
+                    left_at: "2026-08-09T09:14:02.000Z"
+                    title: "To Do · 96h · unassigned"
+              - status: "In Progress"
+                hours: 144
+                time_display: "6d"
+                share: 0.4
+                emphasis: "heavy"
+                who: "j.claes"
+                segments:
+                  - start_hours: 96
+                    duration_hours: 144
+                    who: "j.claes"
+                    entered_at: "2026-08-09T09:14:02.000Z"
+                    left_at: "2026-08-15T09:14:02.000Z"
+                    title: "In Progress · 144h · j.claes"
+              - status: "Code Review"
+                hours: 120
+                time_display: "5d"
+                share: 0.3333
+                emphasis: "normal"
+                who: "s.peeters"
+                segments:
+                  - start_hours: 240
+                    duration_hours: 120
+                    who: "s.peeters"
+                    entered_at: "2026-08-15T09:14:02.000Z"
+                    left_at: "2026-08-20T09:14:02.000Z"
+                    title: "Code Review · 120h · s.peeters"
+              - status: "QA"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+              - status: "Done"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+        - key: "PROJECT-1931"
+          type: "Task"
+          title: "Pin base images and enable digest scanning"
+          url: "https://ACMEintl.atlassian.net/browse/PROJECT-1931"
+          description: "Base images were tracked by floating tags, making builds non-reproducible and hiding CVE drift between deploys."
+          status: "Done"
+          status_category: "done"
+          assignee: "a.ruiz"
+          reporter: "j.claes"
+          created_at: "2026-08-13T09:14:02Z"
+          updated_at: "2026-08-18T09:14:02Z"
+          resolved_at: "2026-08-18T09:14:02Z"
+          meta_display: "a.ruiz · closed 2d ago"
+          timeline:
+            start: "2026-08-13T09:14:02.000Z"
+            end: "2026-08-18T09:14:02.000Z"
+            axis_start_display: "2026-08-13"
+            axis_end_display: "2026-08-18"
+            total_hours: 120
+            lanes:
+              - status: "To Do"
+                hours: 24
+                time_display: "1d"
+                share: 0.2
+                emphasis: "normal"
+                who: "unassigned"
+                segments:
+                  - start_hours: 0
+                    duration_hours: 24
+                    who: "unassigned"
+                    entered_at: "2026-08-13T09:14:02.000Z"
+                    left_at: "2026-08-14T09:14:02.000Z"
+                    title: "To Do · 24h · unassigned"
+              - status: "In Progress"
+                hours: 72
+                time_display: "3d"
+                share: 0.6
+                emphasis: "heavy"
+                who: "a.ruiz"
+                segments:
+                  - start_hours: 24
+                    duration_hours: 72
+                    who: "a.ruiz"
+                    entered_at: "2026-08-14T09:14:02.000Z"
+                    left_at: "2026-08-17T09:14:02.000Z"
+                    title: "In Progress · 72h · a.ruiz"
+              - status: "Code Review"
+                hours: 24
+                time_display: "1d"
+                share: 0.2
+                emphasis: "normal"
+                who: "j.claes"
+                segments:
+                  - start_hours: 96
+                    duration_hours: 24
+                    who: "j.claes"
+                    entered_at: "2026-08-17T09:14:02.000Z"
+                    left_at: "2026-08-18T09:14:02.000Z"
+                    title: "Code Review · 24h · j.claes"
+              - status: "QA"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+              - status: "Done"
+                hours: 0
+                time_display: "—"
+                share: 0
+                emphasis: "empty"
+                who: ""
+                segments: []
+
+</script>
+
+<script>
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).jsyaml={})}(this,function(e){"use strict";function t(e){return e&&e.__esModule&&Object.prototype.hasOwnProperty.call(e,"default")?e.default:e}var n,r,i,o,a,l,u,c,s,p,f,d,h,m,g,y,v,b,A,k,w,x,C,S,I,T,O,j,M,F,E,N,L,_,D,U,q,Y,K,R,H,P,B,W,$={},G={},Z={};function V(){if(n)return Z;function e(t){return(e="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(t)}function t(e){return null==e}return n=1,Z.isNothing=t,Z.isObject=function(t){return"object"===e(t)&&null!==t},Z.toArray=function(e){return Array.isArray(e)?e:t(e)?[]:[e]},Z.repeat=function(e,t){for(var n="",r=0;r<t;r+=1)n+=e;return n},Z.isNegativeZero=function(e){return 0===e&&Number.NEGATIVE_INFINITY===1/e},Z.extend=function(e,t){if(t)for(var n=Object.keys(t),r=0,i=n.length;r<i;r+=1){var o=n[r];e[o]=t[o]}return e},Z}function J(){if(i)return r;function e(e,t){var n="",r=e.reason||"(unknown reason)";return e.mark?(e.mark.name&&(n+='in "'+e.mark.name+'" '),n+="("+(e.mark.line+1)+":"+(e.mark.column+1)+")",!t&&e.mark.snippet&&(n+="\n\n"+e.mark.snippet),r+" "+n):r}function t(t,n){Error.call(this),this.name="YAMLException",this.reason=t,this.mark=n,this.message=e(this,!1),Error.captureStackTrace?Error.captureStackTrace(this,this.constructor):this.stack=(new Error).stack||""}return i=1,t.prototype=Object.create(Error.prototype),t.prototype.constructor=t,t.prototype.toString=function(t){return this.name+": "+e(this,t)},r=t}function z(){if(u)return l;u=1;var e=J(),t=["kind","multi","resolve","construct","instanceOf","predicate","represent","representName","defaultStyle","styleAliases"],n=["scalar","sequence","mapping"];return l=function(r,i){var o,a;if(i=i||{},Object.keys(i).forEach(function(n){if(-1===t.indexOf(n))throw new e('Unknown option "'+n+'" is met in definition of "'+r+'" YAML type.')}),this.options=i,this.tag=r,this.kind=i.kind||null,this.resolve=i.resolve||function(){return!0},this.construct=i.construct||function(e){return e},this.instanceOf=i.instanceOf||null,this.predicate=i.predicate||null,this.represent=i.represent||null,this.representName=i.representName||null,this.defaultStyle=i.defaultStyle||null,this.multi=i.multi||!1,this.styleAliases=(o=i.styleAliases||null,a={},null!==o&&Object.keys(o).forEach(function(e){o[e].forEach(function(t){a[String(t)]=e})}),a),-1===n.indexOf(this.kind))throw new e('Unknown kind "'+this.kind+'" is specified for "'+r+'" YAML type.')}}function Q(){if(s)return c;s=1;var e=J(),t=z();function n(e,t){var n=[];return e[t].forEach(function(e){var t=n.length;n.forEach(function(n,r){n.tag===e.tag&&n.kind===e.kind&&n.multi===e.multi&&(t=r)}),n[t]=e}),n}function r(e){return this.extend(e)}return r.prototype.extend=function(i){var o=[],a=[];if(i instanceof t)a.push(i);else if(Array.isArray(i))a=a.concat(i);else{if(!i||!Array.isArray(i.implicit)&&!Array.isArray(i.explicit))throw new e("Schema.extend argument should be a Type, [ Type ], or a schema definition ({ implicit: [...], explicit: [...] })");i.implicit&&(o=o.concat(i.implicit)),i.explicit&&(a=a.concat(i.explicit))}o.forEach(function(n){if(!(n instanceof t))throw new e("Specified list of YAML types (or a single Type object) contains a non-Type object.");if(n.loadKind&&"scalar"!==n.loadKind)throw new e("There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.");if(n.multi)throw new e("There is a multi type in the implicit list of a schema. Multi tags can only be listed as explicit.")}),a.forEach(function(n){if(!(n instanceof t))throw new e("Specified list of YAML types (or a single Type object) contains a non-Type object.")});var l=Object.create(r.prototype);return l.implicit=(this.implicit||[]).concat(o),l.explicit=(this.explicit||[]).concat(a),l.compiledImplicit=n(l,"implicit"),l.compiledExplicit=n(l,"explicit"),l.compiledTypeMap=function(){var e={scalar:{},sequence:{},mapping:{},fallback:{},multi:{scalar:[],sequence:[],mapping:[],fallback:[]}};function t(t){t.multi?(e.multi[t.kind].push(t),e.multi.fallback.push(t)):e[t.kind][t.tag]=e.fallback[t.tag]=t}for(var n=0,r=arguments.length;n<r;n+=1)arguments[n].forEach(t);return e}(l.compiledImplicit,l.compiledExplicit),l},c=r}function X(){if(f)return p;f=1;var e=z();return p=new e("tag:yaml.org,2002:str",{kind:"scalar",construct:function(e){return null!==e?e:""}})}function ee(){if(h)return d;h=1;var e=z();return d=new e("tag:yaml.org,2002:seq",{kind:"sequence",construct:function(e){return null!==e?e:[]}})}function te(){if(g)return m;g=1;var e=z();return m=new e("tag:yaml.org,2002:map",{kind:"mapping",construct:function(e){return null!==e?e:{}}})}function ne(){if(v)return y;v=1;var e=Q();return y=new e({explicit:[X(),ee(),te()]})}function re(){if(A)return b;A=1;var e=z();return b=new e("tag:yaml.org,2002:null",{kind:"scalar",resolve:function(e){if(null===e)return!0;var t=e.length;return 1===t&&"~"===e||4===t&&("null"===e||"Null"===e||"NULL"===e)},construct:function(){return null},predicate:function(e){return null===e},represent:{canonical:function(){return"~"},lowercase:function(){return"null"},uppercase:function(){return"NULL"},camelcase:function(){return"Null"},empty:function(){return""}},defaultStyle:"lowercase"})}function ie(){if(w)return k;w=1;var e=z();return k=new e("tag:yaml.org,2002:bool",{kind:"scalar",resolve:function(e){if(null===e)return!1;var t=e.length;return 4===t&&("true"===e||"True"===e||"TRUE"===e)||5===t&&("false"===e||"False"===e||"FALSE"===e)},construct:function(e){return"true"===e||"True"===e||"TRUE"===e},predicate:function(e){return"[object Boolean]"===Object.prototype.toString.call(e)},represent:{lowercase:function(e){return e?"true":"false"},uppercase:function(e){return e?"TRUE":"FALSE"},camelcase:function(e){return e?"True":"False"}},defaultStyle:"lowercase"})}function oe(){if(C)return x;C=1;var e=V(),t=z();function n(e){return e>=48&&e<=57||e>=65&&e<=70||e>=97&&e<=102}function r(e){return e>=48&&e<=55}function i(e){return e>=48&&e<=57}function o(e){var t=e,n=1,r=t[0];if("-"!==r&&"+"!==r||("-"===r&&(n=-1),r=(t=t.slice(1))[0]),"0"===t)return 0;if("0"===r){if("b"===t[1])return n*parseInt(t.slice(2),2);if("x"===t[1])return n*parseInt(t.slice(2),16);if("o"===t[1])return n*parseInt(t.slice(2),8)}return n*parseInt(t,10)}return x=new t("tag:yaml.org,2002:int",{kind:"scalar",resolve:function(e){if(null===e)return!1;var t=e.length,a=0,l=!1;if(!t)return!1;var u=e[a];if("-"!==u&&"+"!==u||(u=e[++a]),"0"===u){if(a+1===t)return!0;if("b"===(u=e[++a])){for(a++;a<t;a++){if("0"!==(u=e[a])&&"1"!==u)return!1;l=!0}return l&&isFinite(o(e))}if("x"===u){for(a++;a<t;a++){if(!n(e.charCodeAt(a)))return!1;l=!0}return l&&isFinite(o(e))}if("o"===u){for(a++;a<t;a++){if(!r(e.charCodeAt(a)))return!1;l=!0}return l&&isFinite(o(e))}}for(;a<t;a++){if(!i(e.charCodeAt(a)))return!1;l=!0}return!!l&&isFinite(o(e))},construct:function(e){return o(e)},predicate:function(t){return"[object Number]"===Object.prototype.toString.call(t)&&t%1==0&&!e.isNegativeZero(t)},represent:{binary:function(e){return e>=0?"0b"+e.toString(2):"-0b"+e.toString(2).slice(1)},octal:function(e){return e>=0?"0o"+e.toString(8):"-0o"+e.toString(8).slice(1)},decimal:function(e){return e.toString(10)},hexadecimal:function(e){return e>=0?"0x"+e.toString(16).toUpperCase():"-0x"+e.toString(16).toUpperCase().slice(1)}},defaultStyle:"decimal",styleAliases:{binary:[2,"bin"],octal:[8,"oct"],decimal:[10,"dec"],hexadecimal:[16,"hex"]}})}function ae(){if(I)return S;I=1;var e=V(),t=z(),n=new RegExp("^(?:[-+]?(?:[0-9]+)(?:\\.[0-9]*)?(?:[eE][-+]?[0-9]+)?|\\.[0-9]+(?:[eE][-+]?[0-9]+)?|[-+]?\\.(?:inf|Inf|INF)|\\.(?:nan|NaN|NAN))$"),r=new RegExp("^(?:[-+]?\\.(?:inf|Inf|INF)|\\.(?:nan|NaN|NAN))$");var i=/^[-+]?[0-9]+e/;return S=new t("tag:yaml.org,2002:float",{kind:"scalar",resolve:function(e){return null!==e&&(!!n.test(e)&&(!!isFinite(parseFloat(e,10))||r.test(e)))},construct:function(e){var t=e.toLowerCase(),n="-"===t[0]?-1:1;return"+-".indexOf(t[0])>=0&&(t=t.slice(1)),".inf"===t?1===n?Number.POSITIVE_INFINITY:Number.NEGATIVE_INFINITY:".nan"===t?NaN:n*parseFloat(t,10)},predicate:function(t){return"[object Number]"===Object.prototype.toString.call(t)&&(t%1!=0||e.isNegativeZero(t))},represent:function(t,n){if(isNaN(t))switch(n){case"lowercase":return".nan";case"uppercase":return".NAN";case"camelcase":return".NaN"}else if(Number.POSITIVE_INFINITY===t)switch(n){case"lowercase":return".inf";case"uppercase":return".INF";case"camelcase":return".Inf"}else if(Number.NEGATIVE_INFINITY===t)switch(n){case"lowercase":return"-.inf";case"uppercase":return"-.INF";case"camelcase":return"-.Inf"}else if(e.isNegativeZero(t))return"-0.0";var r=t.toString(10);return i.test(r)?r.replace("e",".e"):r},defaultStyle:"lowercase"})}function le(){return O?T:(O=1,T=ne().extend({implicit:[re(),ie(),oe(),ae()]}))}function ue(){return M?j:(M=1,j=le())}function ce(){if(E)return F;E=1;var e=z(),t=new RegExp("^([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])$"),n=new RegExp("^([0-9][0-9][0-9][0-9])-([0-9][0-9]?)-([0-9][0-9]?)(?:[Tt]|[ \\t]+)([0-9][0-9]?):([0-9][0-9]):([0-9][0-9])(?:\\.([0-9]*))?(?:[ \\t]*(Z|([-+])([0-9][0-9]?)(?::([0-9][0-9]))?))?$");return F=new e("tag:yaml.org,2002:timestamp",{kind:"scalar",resolve:function(e){return null!==e&&(null!==t.exec(e)||null!==n.exec(e))},construct:function(e){var r=0,i=null,o=t.exec(e);if(null===o&&(o=n.exec(e)),null===o)throw new Error("Date resolve error");var a=+o[1],l=+o[2]-1,u=+o[3];if(!o[4])return new Date(Date.UTC(a,l,u));var c=+o[4],s=+o[5],p=+o[6];if(o[7]){for(r=o[7].slice(0,3);r.length<3;)r+="0";r=+r}o[9]&&(i=6e4*(60*+o[10]+ +(o[11]||0)),"-"===o[9]&&(i=-i));var f=new Date(Date.UTC(a,l,u,c,s,p,r));return i&&f.setTime(f.getTime()-i),f},instanceOf:Date,represent:function(e){return e.toISOString()}})}function se(){if(L)return N;L=1;var e=z();return N=new e("tag:yaml.org,2002:merge",{kind:"scalar",resolve:function(e){return"<<"===e||null===e}})}function pe(){if(D)return _;D=1;var e=z(),t="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\n\r";return _=new e("tag:yaml.org,2002:binary",{kind:"scalar",resolve:function(e){if(null===e)return!1;for(var n=0,r=e.length,i=t,o=0;o<r;o++){var a=i.indexOf(e.charAt(o));if(!(a>64)){if(a<0)return!1;n+=6}}return n%8==0},construct:function(e){for(var n=e.replace(/[\r\n=]/g,""),r=n.length,i=t,o=0,a=[],l=0;l<r;l++)l%4==0&&l&&(a.push(o>>16&255),a.push(o>>8&255),a.push(255&o)),o=o<<6|i.indexOf(n.charAt(l));var u=r%4*6;return 0===u?(a.push(o>>16&255),a.push(o>>8&255),a.push(255&o)):18===u?(a.push(o>>10&255),a.push(o>>2&255)):12===u&&a.push(o>>4&255),new Uint8Array(a)},predicate:function(e){return"[object Uint8Array]"===Object.prototype.toString.call(e)},represent:function(e){for(var n="",r=0,i=e.length,o=t,a=0;a<i;a++)a%3==0&&a&&(n+=o[r>>18&63],n+=o[r>>12&63],n+=o[r>>6&63],n+=o[63&r]),r=(r<<8)+e[a];var l=i%3;return 0===l?(n+=o[r>>18&63],n+=o[r>>12&63],n+=o[r>>6&63],n+=o[63&r]):2===l?(n+=o[r>>10&63],n+=o[r>>4&63],n+=o[r<<2&63],n+=o[64]):1===l&&(n+=o[r>>2&63],n+=o[r<<4&63],n+=o[64],n+=o[64]),n}})}function fe(){if(q)return U;q=1;var e=z(),t=Object.prototype.hasOwnProperty,n=Object.prototype.toString;return U=new e("tag:yaml.org,2002:omap",{kind:"sequence",resolve:function(e){if(null===e)return!0;for(var r={},i=e,o=0,a=i.length;o<a;o+=1){var l=i[o],u=!1;if("[object Object]"!==n.call(l))return!1;var c=void 0;for(c in l)if(t.call(l,c)){if(u)return!1;u=!0}if(!u)return!1;if(t.call(r,c))return!1;Object.defineProperty(r,c,{value:!0})}return!0},construct:function(e){return null!==e?e:[]}})}function de(){if(K)return Y;K=1;var e=z(),t=Object.prototype.toString;return Y=new e("tag:yaml.org,2002:pairs",{kind:"sequence",resolve:function(e){if(null===e)return!0;for(var n=e,r=new Array(n.length),i=0,o=n.length;i<o;i+=1){var a=n[i];if("[object Object]"!==t.call(a))return!1;var l=Object.keys(a);if(1!==l.length)return!1;r[i]=[l[0],a[l[0]]]}return!0},construct:function(e){if(null===e)return[];for(var t=e,n=new Array(t.length),r=0,i=t.length;r<i;r+=1){var o=t[r],a=Object.keys(o);n[r]=[a[0],o[a[0]]]}return n}})}function he(){if(H)return R;H=1;var e=z(),t=Object.prototype.hasOwnProperty;return R=new e("tag:yaml.org,2002:set",{kind:"mapping",resolve:function(e){if(null===e)return!0;var n=e;for(var r in n)if(t.call(n,r)&&null!==n[r])return!1;return!0},construct:function(e){return null!==e?e:{}}})}function me(){return B?P:(B=1,P=ue().extend({implicit:[ce(),se()],explicit:[pe(),fe(),de(),he()]}))}function ge(){if(W)return G;function e(t){return(e="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(t)}W=1;var t=V(),n=J(),r=function(){if(a)return o;a=1;var e=V();function t(e,t,n,r,i){var o="",a="",l=Math.floor(i/2)-1;return r-t>l&&(t=r-l+(o=" ... ").length),n-r>l&&(n=r+l-(a=" ...").length),{str:o+e.slice(t,n).replace(/\t/g,"→")+a,pos:r-t+o.length}}function n(t,n){return e.repeat(" ",n-t.length)+t}return o=function(r,i){if(i=Object.create(i||null),!r.buffer)return null;i.maxLength||(i.maxLength=79),"number"!=typeof i.indent&&(i.indent=1),"number"!=typeof i.linesBefore&&(i.linesBefore=3),"number"!=typeof i.linesAfter&&(i.linesAfter=2);for(var o,a=/\r?\n|\r|\0/g,l=[0],u=[],c=-1;o=a.exec(r.buffer);)u.push(o.index),l.push(o.index+o[0].length),r.position<=o.index&&c<0&&(c=l.length-2);c<0&&(c=l.length-1);for(var s="",p=Math.min(r.line+i.linesAfter,u.length).toString().length,f=i.maxLength-(i.indent+p+3),d=1;d<=i.linesBefore&&!(c-d<0);d++){var h=t(r.buffer,l[c-d],u[c-d],r.position-(l[c]-l[c-d]),f);s=e.repeat(" ",i.indent)+n((r.line-d+1).toString(),p)+" | "+h.str+"\n"+s}var m=t(r.buffer,l[c],u[c],r.position,f);s+=e.repeat(" ",i.indent)+n((r.line+1).toString(),p)+" | "+m.str+"\n",s+=e.repeat("-",i.indent+p+3+m.pos)+"^\n";for(var g=1;g<=i.linesAfter&&!(c+g>=u.length);g++){var y=t(r.buffer,l[c+g],u[c+g],r.position-(l[c]-l[c+g]),f);s+=e.repeat(" ",i.indent)+n((r.line+g+1).toString(),p)+" | "+y.str+"\n"}return s.replace(/\n$/,"")}}(),i=me(),l=Object.prototype.hasOwnProperty,u=/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x84\x86-\x9F\uFFFE\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/,c=/[\x85\u2028\u2029]/,s=/[,\[\]{}]/,p=/^(?:!|!!|![0-9A-Za-z-]+!)$/,f=/^(?:!|[^,\[\]{}])(?:%[0-9a-f]{2}|[0-9a-z\-#;/?:@&=+$,_.!~*'()\[\]])*$/i;function d(e){return Object.prototype.toString.call(e)}function h(e){return 10===e||13===e}function m(e){return 9===e||32===e}function g(e){return 9===e||32===e||10===e||13===e}function y(e){return 44===e||91===e||93===e||123===e||125===e}function v(e){if(e>=48&&e<=57)return e-48;var t=32|e;return t>=97&&t<=102?t-97+10:-1}function b(e){return 120===e?2:117===e?4:85===e?8:0}function A(e){return e>=48&&e<=57?e-48:-1}function k(e){switch(e){case 48:return"\0";case 97:return"";case 98:return"\b";case 116:case 9:return"\t";case 110:return"\n";case 118:return"\v";case 102:return"\f";case 114:return"\r";case 101:return"";case 32:return" ";case 34:return'"';case 47:return"/";case 92:return"\\";case 78:return"";case 95:return" ";case 76:return"\u2028";case 80:return"\u2029";default:return""}}function w(e){return e<=65535?String.fromCharCode(e):String.fromCharCode(55296+(e-65536>>10),56320+(e-65536&1023))}function x(e,t,n){"__proto__"===t?Object.defineProperty(e,t,{configurable:!0,enumerable:!0,writable:!0,value:n}):e[t]=n}for(var C=new Array(256),S=new Array(256),I=0;I<256;I++)C[I]=k(I)?1:0,S[I]=k(I);function T(e,t){this.input=e,this.filename=t.filename||null,this.schema=t.schema||i,this.onWarning=t.onWarning||null,this.legacy=t.legacy||!1,this.json=t.json||!1,this.listener=t.listener||null,this.maxDepth="number"==typeof t.maxDepth?t.maxDepth:100,this.maxTotalMergeKeys="number"==typeof t.maxTotalMergeKeys?t.maxTotalMergeKeys:1e4,this.implicitTypes=this.schema.compiledImplicit,this.typeMap=this.schema.compiledTypeMap,this.length=e.length,this.position=0,this.line=0,this.lineStart=0,this.lineIndent=0,this.depth=0,this.totalMergeKeys=0,this.firstTabInLine=-1,this.documents=[],this.anchorMapTransactions=[]}function O(e,t){var i={name:e.filename,buffer:e.input.slice(0,-1),position:e.position,line:e.line,column:e.position-e.lineStart};return i.snippet=r(i),new n(t,i)}function j(e,t){throw O(e,t)}function M(e,t){e.onWarning&&e.onWarning.call(null,O(e,t))}function F(e,t,n){var r=e.anchorMapTransactions;if(0!==r.length){var i=r[r.length-1];l.call(i,t)||(i[t]={existed:l.call(e.anchorMap,t),value:e.anchorMap[t]})}e.anchorMap[t]=n}function E(e){return{position:e.position,line:e.line,lineStart:e.lineStart,lineIndent:e.lineIndent,firstTabInLine:e.firstTabInLine,tag:e.tag,anchor:e.anchor,kind:e.kind,result:e.result}}function N(e,t){e.position=t.position,e.line=t.line,e.lineStart=t.lineStart,e.lineIndent=t.lineIndent,e.firstTabInLine=t.firstTabInLine,e.tag=t.tag,e.anchor=t.anchor,e.kind=t.kind,e.result=t.result}var L={YAML:function(e,t,n){null!==e.version&&j(e,"duplication of %YAML directive"),1!==n.length&&j(e,"YAML directive accepts exactly one argument");var r=/^([0-9]+)\.([0-9]+)$/.exec(n[0]);null===r&&j(e,"ill-formed argument of the YAML directive");var i=parseInt(r[1],10),o=parseInt(r[2],10);1!==i&&j(e,"unacceptable YAML version of the document"),e.version=n[0],e.checkLineBreaks=o<2,1!==o&&2!==o&&M(e,"unsupported YAML version of the document")},TAG:function(e,t,n){var r;2!==n.length&&j(e,"TAG directive accepts exactly two arguments");var i=n[0];r=n[1],p.test(i)||j(e,"ill-formed tag handle (first argument) of the TAG directive"),l.call(e.tagMap,i)&&j(e,'there is a previously declared suffix for "'+i+'" tag handle'),f.test(r)||j(e,"ill-formed tag prefix (second argument) of the TAG directive");try{r=decodeURIComponent(r)}catch(t){j(e,"tag prefix is malformed: "+r)}e.tagMap[i]=r}};function _(e,t,n,r){if(t<n){var i=e.input.slice(t,n);if(r)for(var o=0,a=i.length;o<a;o+=1){var l=i.charCodeAt(o);9===l||l>=32&&l<=1114111||j(e,"expected valid JSON character")}else u.test(i)&&j(e,"the stream contains non-printable characters");e.result+=i}}function D(e){e.totalMergeKeys++,-1!==e.maxTotalMergeKeys&&e.totalMergeKeys>e.maxTotalMergeKeys&&j(e,"merge keys exceeded maxTotalMergeKeys ("+e.maxTotalMergeKeys+")")}function U(e,n,r,i){t.isObject(r)||j(e,"cannot merge mappings; the provided source object is unacceptable"),D(e);for(var o=Object.keys(r),a=0,u=o.length;a<u;a+=1){var c=o[a];D(e),l.call(n,c)||(x(n,c,r[c]),i[c]=!0)}}function q(t,n,r,i,o,a,u,c,s){if(Array.isArray(o))for(var p=0,f=(o=Array.prototype.slice.call(o)).length;p<f;p+=1)Array.isArray(o[p])&&j(t,"nested arrays are not supported inside keys"),"object"===e(o)&&"[object Object]"===d(o[p])&&(o[p]="[object Object]");if("object"===e(o)&&"[object Object]"===d(o)&&(o="[object Object]"),o=String(o),null===n&&(n={}),"tag:yaml.org,2002:merge"===i)if(Array.isArray(a)){a.length>100&&j(t,"abnormal merge sequence size");for(var h=0,m=a.length;h<m;h+=1)U(t,n,a[h],r)}else U(t,n,a,r);else t.json||l.call(r,o)||!l.call(n,o)||(t.line=u||t.line,t.lineStart=c||t.lineStart,t.position=s||t.position,j(t,"duplicated mapping key")),x(n,o,a),delete r[o];return n}function Y(e){var t=e.input.charCodeAt(e.position);10===t?e.position++:13===t?(e.position++,10===e.input.charCodeAt(e.position)&&e.position++):j(e,"a line break is expected"),e.line+=1,e.lineStart=e.position,e.firstTabInLine=-1}function K(e,t,n){for(var r=0,i=e.input.charCodeAt(e.position);0!==i;){for(;m(i);)9===i&&-1===e.firstTabInLine&&(e.firstTabInLine=e.position),i=e.input.charCodeAt(++e.position);if(t&&35===i)do{i=e.input.charCodeAt(++e.position)}while(10!==i&&13!==i&&0!==i);if(!h(i))break;for(Y(e),i=e.input.charCodeAt(e.position),r++,e.lineIndent=0;32===i;)e.lineIndent++,i=e.input.charCodeAt(++e.position)}return-1!==n&&0!==r&&e.lineIndent<n&&M(e,"deficient indentation"),r}function R(e){var t=e.position,n=e.input.charCodeAt(t);return!(45!==n&&46!==n||n!==e.input.charCodeAt(t+1)||n!==e.input.charCodeAt(t+2)||(t+=3,0!==(n=e.input.charCodeAt(t))&&!g(n)))}function H(e,n){1===n?e.result+=" ":n>1&&(e.result+=t.repeat("\n",n-1))}function P(e,t){var n=e.tag,r=e.anchor,i=[],o=!1;if(-1!==e.firstTabInLine)return!1;null!==e.anchor&&F(e,e.anchor,i);for(var a=e.input.charCodeAt(e.position);0!==a&&(-1!==e.firstTabInLine&&(e.position=e.firstTabInLine,j(e,"tab characters must not be used in indentation")),45===a);){if(!g(e.input.charCodeAt(e.position+1)))break;if(o=!0,e.position++,K(e,!0,-1)&&e.lineIndent<=t)i.push(null),a=e.input.charCodeAt(e.position);else{var l=e.line;if(Q(e,t,3,!1,!0),i.push(e.result),K(e,!0,-1),a=e.input.charCodeAt(e.position),(e.line===l||e.lineIndent>t)&&0!==a)j(e,"bad indentation of a sequence entry");else if(e.lineIndent<t)break}}return!!o&&(e.tag=n,e.anchor=r,e.kind="sequence",e.result=i,!0)}function B(e,t,n){var r,i,o,a,l=e.tag,u=e.anchor,c={},s=Object.create(null),p=null,f=null,d=null,h=!1,y=!1;if(-1!==e.firstTabInLine)return!1;null!==e.anchor&&F(e,e.anchor,c);for(var v=e.input.charCodeAt(e.position);0!==v;){h||-1===e.firstTabInLine||(e.position=e.firstTabInLine,j(e,"tab characters must not be used in indentation"));var b=e.input.charCodeAt(e.position+1),A=e.line;if(63!==v&&58!==v||!g(b)){if(i=e.line,o=e.lineStart,a=e.position,!Q(e,n,2,!1,!0))break;if(e.line===A){for(v=e.input.charCodeAt(e.position);m(v);)v=e.input.charCodeAt(++e.position);if(58===v)g(v=e.input.charCodeAt(++e.position))||j(e,"a whitespace character is expected after the key-value separator within a block mapping"),h&&(q(e,c,s,p,f,null,i,o,a),p=f=d=null),y=!0,h=!1,r=!1,p=e.tag,f=e.result;else{if(!y)return e.tag=l,e.anchor=u,!0;j(e,"can not read an implicit mapping pair; a colon is missed")}}else{if(!y)return e.tag=l,e.anchor=u,!0;j(e,"can not read a block mapping entry; a multiline key may not be an implicit key")}}else 63===v?(h&&(q(e,c,s,p,f,null,i,o,a),p=f=d=null),y=!0,h=!0,r=!0):h?(h=!1,r=!0):j(e,"incomplete explicit mapping pair; a key node is missed; or followed by a non-tabulated empty line"),e.position+=1,v=b;if((e.line===A||e.lineIndent>t)&&(h&&(i=e.line,o=e.lineStart,a=e.position),Q(e,t,4,!0,r)&&(h?f=e.result:d=e.result),h||(q(e,c,s,p,f,d,i,o,a),p=f=d=null),K(e,!0,-1),v=e.input.charCodeAt(e.position)),(e.line===A||e.lineIndent>t)&&0!==v)j(e,"bad indentation of a mapping entry");else if(e.lineIndent<t)break}return h&&q(e,c,s,p,f,null,i,o,a),y&&(e.tag=l,e.anchor=u,e.kind="mapping",e.result=c),y}function $(e){var t,n,r=!1,i=!1,o=e.input.charCodeAt(e.position);if(33!==o)return!1;null!==e.tag&&j(e,"duplication of a tag property"),60===(o=e.input.charCodeAt(++e.position))?(r=!0,o=e.input.charCodeAt(++e.position)):33===o?(i=!0,t="!!",o=e.input.charCodeAt(++e.position)):t="!";var a=e.position;if(r){do{o=e.input.charCodeAt(++e.position)}while(0!==o&&62!==o);e.position<e.length?(n=e.input.slice(a,e.position),o=e.input.charCodeAt(++e.position)):j(e,"unexpected end of the stream within a verbatim tag")}else{for(;0!==o&&!g(o);)33===o&&(i?j(e,"tag suffix cannot contain exclamation marks"):(t=e.input.slice(a-1,e.position+1),p.test(t)||j(e,"named tag handle cannot contain such characters"),i=!0,a=e.position+1)),o=e.input.charCodeAt(++e.position);n=e.input.slice(a,e.position),s.test(n)&&j(e,"tag suffix cannot contain flow indicator characters")}n&&!f.test(n)&&j(e,"tag name cannot contain such characters: "+n);try{n=decodeURIComponent(n)}catch(t){j(e,"tag name is malformed: "+n)}return r?e.tag=n:l.call(e.tagMap,t)?e.tag=e.tagMap[t]+n:"!"===t?e.tag="!"+n:"!!"===t?e.tag="tag:yaml.org,2002:"+n:j(e,'undeclared tag handle "'+t+'"'),!0}function Z(e){var t=e.input.charCodeAt(e.position);if(38!==t)return!1;null!==e.anchor&&j(e,"duplication of an anchor property"),t=e.input.charCodeAt(++e.position);for(var n=e.position;0!==t&&!g(t)&&!y(t);)t=e.input.charCodeAt(++e.position);return e.position===n&&j(e,"name of an anchor node must contain at least one character"),e.anchor=e.input.slice(n,e.position),!0}function z(e,t,n,r){var i=E(e);return function(e){e.anchorMapTransactions.push(Object.create(null))}(e),N(e,t),e.tag=null,e.anchor=null,e.kind=null,e.result=null,B(e,n,r)&&"mapping"===e.kind?(function(e){var t=e.anchorMapTransactions.pop(),n=e.anchorMapTransactions;if(0!==n.length)for(var r=n[n.length-1],i=Object.keys(t),o=0,a=i.length;o<a;o+=1){var u=i[o];l.call(r,u)||(r[u]=t[u])}}(e),!0):(function(e){for(var t=e.anchorMapTransactions.pop(),n=Object.keys(t),r=n.length-1;r>=0;r-=1){var i=t[n[r]];i.existed?e.anchorMap[n[r]]=i.value:delete e.anchorMap[n[r]]}}(e),N(e,i),!1)}function Q(e,n,r,i,o){var a,u,c,s,p,f=1,d=!1,k=!1,x=null;e.depth>=e.maxDepth&&j(e,"nesting exceeded maxDepth ("+e.maxDepth+")"),e.depth+=1,null!==e.listener&&e.listener("open",e),e.tag=null,e.anchor=null,e.kind=null,e.result=null;var I=a=u=4===r||3===r;if(i&&K(e,!0,-1)&&(d=!0,e.lineIndent>n?f=1:e.lineIndent===n?f=0:e.lineIndent<n&&(f=-1)),1===f)for(;;){var T=e.input.charCodeAt(e.position),O=E(e);if(d&&(33===T&&null!==e.tag||38===T&&null!==e.anchor))break;if(!$(e)&&!Z(e))break;null===x&&(x=O),K(e,!0,-1)?(d=!0,u=I,e.lineIndent>n?f=1:e.lineIndent===n?f=0:e.lineIndent<n&&(f=-1)):u=!1}if(u&&(u=d||o),1===f||4===r)if(s=1===r||2===r?n:n+1,p=e.position-e.lineStart,1===f)if(u&&(P(e,p)||B(e,p,s))||function(e,t){var n,r,i,o,a,l,u,c,s,p,f,d=!0,h=e.tag,m=e.anchor,y=Object.create(null),v=e.input.charCodeAt(e.position);if(91===v)a=93,c=!1,o=[];else{if(123!==v)return!1;a=125,c=!0,o={}}for(null!==e.anchor&&F(e,e.anchor,o),v=e.input.charCodeAt(++e.position);0!==v;){if(K(e,!0,t),(v=e.input.charCodeAt(e.position))===a)return e.position++,e.tag=h,e.anchor=m,e.kind=c?"mapping":"sequence",e.result=o,!0;d?44===v&&j(e,"expected the node content, but found ','"):j(e,"missed comma between flow collection entries"),f=null,l=u=!1,63===v&&g(e.input.charCodeAt(e.position+1))&&(l=u=!0,e.position++,K(e,!0,t)),n=e.line,r=e.lineStart,i=e.position,Q(e,t,1,!1,!0),p=e.tag,s=e.result,K(e,!0,t),v=e.input.charCodeAt(e.position),!u&&e.line!==n||58!==v||(l=!0,v=e.input.charCodeAt(++e.position),K(e,!0,t),Q(e,t,1,!1,!0),f=e.result),c?q(e,o,y,p,s,f,n,r,i):l?o.push(q(e,null,y,p,s,f,n,r,i)):o.push(s),K(e,!0,t),44===(v=e.input.charCodeAt(e.position))?(d=!0,v=e.input.charCodeAt(++e.position)):d=!1}j(e,"unexpected end of the stream within a flow collection")}(e,s))k=!0;else{var M=e.input.charCodeAt(e.position);null!==x&&I&&!u&&124!==M&&62!==M&&z(e,x,x.position-x.lineStart,s)||a&&function(e,n){var r,i,o=1,a=!1,l=!1,u=n,c=0,s=!1,p=e.input.charCodeAt(e.position);if(124===p)r=!1;else{if(62!==p)return!1;r=!0}for(e.kind="scalar",e.result="";0!==p;)if(43===(p=e.input.charCodeAt(++e.position))||45===p)1===o?o=43===p?3:2:j(e,"repeat of a chomping mode identifier");else{if(!((i=A(p))>=0))break;0===i?j(e,"bad explicit indentation width of a block scalar; it cannot be less than one"):l?j(e,"repeat of an indentation width identifier"):(u=n+i-1,l=!0)}if(m(p)){do{p=e.input.charCodeAt(++e.position)}while(m(p));if(35===p)do{p=e.input.charCodeAt(++e.position)}while(!h(p)&&0!==p)}for(;0!==p;){for(Y(e),e.lineIndent=0,p=e.input.charCodeAt(e.position);(!l||e.lineIndent<u)&&32===p;)e.lineIndent++,p=e.input.charCodeAt(++e.position);if(!l&&e.lineIndent>u&&(u=e.lineIndent),h(p))c++;else{if(l||0!==u||j(e,"missing indentation for block scalar"),e.lineIndent<u){3===o?e.result+=t.repeat("\n",a?1+c:c):1===o&&a&&(e.result+="\n");break}r?m(p)?(s=!0,e.result+=t.repeat("\n",a?1+c:c)):s?(s=!1,e.result+=t.repeat("\n",c+1)):0===c?a&&(e.result+=" "):e.result+=t.repeat("\n",c):e.result+=t.repeat("\n",a?1+c:c),a=!0,l=!0,c=0;for(var f=e.position;!h(p)&&0!==p;)p=e.input.charCodeAt(++e.position);_(e,f,e.position,!1)}}return!0}(e,s)||function(e,t){var n,r,i=e.input.charCodeAt(e.position);if(39!==i)return!1;for(e.kind="scalar",e.result="",e.position++,n=r=e.position;0!==(i=e.input.charCodeAt(e.position));)if(39===i){if(_(e,n,e.position,!0),39!==(i=e.input.charCodeAt(++e.position)))return!0;n=e.position,e.position++,r=e.position}else h(i)?(_(e,n,r,!0),H(e,K(e,!1,t)),n=r=e.position):e.position===e.lineStart&&R(e)?j(e,"unexpected end of the document within a single quoted scalar"):(e.position++,m(i)||(r=e.position));j(e,"unexpected end of the stream within a single quoted scalar")}(e,s)||function(e,t){var n,r,i,o=e.input.charCodeAt(e.position);if(34!==o)return!1;for(e.kind="scalar",e.result="",e.position++,n=r=e.position;0!==(o=e.input.charCodeAt(e.position));){if(34===o)return _(e,n,e.position,!0),e.position++,!0;if(92===o){if(_(e,n,e.position,!0),h(o=e.input.charCodeAt(++e.position)))K(e,!1,t);else if(o<256&&C[o])e.result+=S[o],e.position++;else if((i=b(o))>0){for(var a=i,l=0;a>0;a--)(i=v(o=e.input.charCodeAt(++e.position)))>=0?l=(l<<4)+i:j(e,"expected hexadecimal character");e.result+=w(l),e.position++}else j(e,"unknown escape sequence");n=r=e.position}else h(o)?(_(e,n,r,!0),H(e,K(e,!1,t)),n=r=e.position):e.position===e.lineStart&&R(e)?j(e,"unexpected end of the document within a double quoted scalar"):(e.position++,m(o)||(r=e.position))}j(e,"unexpected end of the stream within a double quoted scalar")}(e,s)?k=!0:!function(e){var t=e.input.charCodeAt(e.position);if(42!==t)return!1;t=e.input.charCodeAt(++e.position);for(var n=e.position;0!==t&&!g(t)&&!y(t);)t=e.input.charCodeAt(++e.position);e.position===n&&j(e,"name of an alias node must contain at least one character");var r=e.input.slice(n,e.position);return l.call(e.anchorMap,r)||j(e,'unidentified alias "'+r+'"'),e.result=e.anchorMap[r],K(e,!0,-1),!0}(e)?function(e,t,n){var r,i,o,a,l,u,c=e.kind,s=e.result,p=e.input.charCodeAt(e.position);if(g(p)||y(p)||35===p||38===p||42===p||33===p||124===p||62===p||39===p||34===p||37===p||64===p||96===p)return!1;if(63===p||45===p){var f=e.input.charCodeAt(e.position+1);if(g(f)||n&&y(f))return!1}for(e.kind="scalar",e.result="",r=i=e.position,o=!1;0!==p;){if(58===p){var d=e.input.charCodeAt(e.position+1);if(g(d)||n&&y(d))break}else if(35===p){if(g(e.input.charCodeAt(e.position-1)))break}else{if(e.position===e.lineStart&&R(e)||n&&y(p))break;if(h(p)){if(a=e.line,l=e.lineStart,u=e.lineIndent,K(e,!1,-1),e.lineIndent>=t){o=!0,p=e.input.charCodeAt(e.position);continue}e.position=i,e.line=a,e.lineStart=l,e.lineIndent=u;break}}o&&(_(e,r,i,!1),H(e,e.line-a),r=i=e.position,o=!1),m(p)||(i=e.position+1),p=e.input.charCodeAt(++e.position)}return _(e,r,i,!1),!!e.result||(e.kind=c,e.result=s,!1)}(e,s,1===r)&&(k=!0,null===e.tag&&(e.tag="?")):(k=!0,null===e.tag&&null===e.anchor||j(e,"alias node should not have any properties")),null!==e.anchor&&F(e,e.anchor,e.result)}else 0===f&&(k=u&&P(e,p));if(null===e.tag)null!==e.anchor&&F(e,e.anchor,e.result);else if("?"===e.tag){null!==e.result&&"scalar"!==e.kind&&j(e,'unacceptable node kind for !<?> tag; it should be "scalar", not "'+e.kind+'"');for(var N=0,L=e.implicitTypes.length;N<L;N+=1)if((c=e.implicitTypes[N]).resolve(e.result)){e.result=c.construct(e.result),e.tag=c.tag,null!==e.anchor&&F(e,e.anchor,e.result);break}}else if("!"!==e.tag){if(l.call(e.typeMap[e.kind||"fallback"],e.tag))c=e.typeMap[e.kind||"fallback"][e.tag];else{c=null;for(var D=e.typeMap.multi[e.kind||"fallback"],U=0,W=D.length;U<W;U+=1)if(e.tag.slice(0,D[U].tag.length)===D[U].tag){c=D[U];break}}c||j(e,"unknown tag !<"+e.tag+">"),null!==e.result&&c.kind!==e.kind&&j(e,"unacceptable node kind for !<"+e.tag+'> tag; it should be "'+c.kind+'", not "'+e.kind+'"'),c.resolve(e.result,e.tag)?(e.result=c.construct(e.result,e.tag),null!==e.anchor&&F(e,e.anchor,e.result)):j(e,"cannot resolve a node with !<"+e.tag+"> explicit tag")}return null!==e.listener&&e.listener("close",e),e.depth-=1,null!==e.tag||null!==e.anchor||k}function X(e){var t,n=e.position,r=!1;for(e.version=null,e.checkLineBreaks=e.legacy,e.tagMap=Object.create(null),e.anchorMap=Object.create(null);0!==(t=e.input.charCodeAt(e.position))&&(K(e,!0,-1),t=e.input.charCodeAt(e.position),!(e.lineIndent>0||37!==t));){r=!0,t=e.input.charCodeAt(++e.position);for(var i=e.position;0!==t&&!g(t);)t=e.input.charCodeAt(++e.position);var o=e.input.slice(i,e.position),a=[];for(o.length<1&&j(e,"directive name must not be less than one character in length");0!==t;){for(;m(t);)t=e.input.charCodeAt(++e.position);if(35===t){do{t=e.input.charCodeAt(++e.position)}while(0!==t&&!h(t));break}if(h(t))break;for(i=e.position;0!==t&&!g(t);)t=e.input.charCodeAt(++e.position);a.push(e.input.slice(i,e.position))}0!==t&&Y(e),l.call(L,o)?L[o](e,o,a):M(e,'unknown document directive "'+o+'"')}K(e,!0,-1),0===e.lineIndent&&45===e.input.charCodeAt(e.position)&&45===e.input.charCodeAt(e.position+1)&&45===e.input.charCodeAt(e.position+2)?(e.position+=3,K(e,!0,-1)):r&&j(e,"directives end mark is expected"),Q(e,e.lineIndent-1,4,!1,!0),K(e,!0,-1),e.checkLineBreaks&&c.test(e.input.slice(n,e.position))&&M(e,"non-ASCII line breaks are interpreted as content"),e.documents.push(e.result),e.position===e.lineStart&&R(e)?46===e.input.charCodeAt(e.position)&&(e.position+=3,K(e,!0,-1)):e.position<e.length-1&&j(e,"end of the stream or a document separator is expected")}function ee(e,t){t=t||{},0!==(e=String(e)).length&&(10!==e.charCodeAt(e.length-1)&&13!==e.charCodeAt(e.length-1)&&(e+="\n"),65279===e.charCodeAt(0)&&(e=e.slice(1)));var n=new T(e,t),r=e.indexOf("\0");for(-1!==r&&(n.position=r,j(n,"null byte is not allowed in input")),n.input+="\0";32===n.input.charCodeAt(n.position);)n.lineIndent+=1,n.position+=1;for(;n.position<n.length-1;)X(n);return n.documents}return G.loadAll=function(t,n,r){null!==n&&"object"===e(n)&&void 0===r&&(r=n,n=null);var i=ee(t,r);if("function"!=typeof n)return i;for(var o=0,a=i.length;o<a;o+=1)n(i[o])},G.load=function(e,t){var r=ee(e,t);if(0!==r.length){if(1===r.length)return r[0];throw new n("expected a single document in the stream, but found more")}},G}var ye,ve,be={};function Ae(){if(ye)return be;function e(t){return(e="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(t)}ye=1;var t=V(),n=J(),r=me(),i=Object.prototype.toString,o=Object.prototype.hasOwnProperty,a=65279,l={0:"\\0",7:"\\a",8:"\\b",9:"\\t",10:"\\n",11:"\\v",12:"\\f",13:"\\r",27:"\\e",34:'\\"',92:"\\\\",133:"\\N",160:"\\_",8232:"\\L",8233:"\\P"},u=["y","Y","yes","Yes","YES","on","On","ON","n","N","no","No","NO","off","Off","OFF"],c=/^[-+]?[0-9_]+(?::[0-9_]+)+(?:\.[0-9_]*)?$/;function s(e){var r,i,o=e.toString(16).toUpperCase();if(e<=255)r="x",i=2;else if(e<=65535)r="u",i=4;else{if(!(e<=4294967295))throw new n("code point within a string may not be greater than 0xFFFFFFFF");r="U",i=8}return"\\"+r+t.repeat("0",i-o.length)+o}function p(e){this.schema=e.schema||r,this.indent=Math.max(1,e.indent||2),this.noArrayIndent=e.noArrayIndent||!1,this.skipInvalid=e.skipInvalid||!1,this.flowLevel=t.isNothing(e.flowLevel)?-1:e.flowLevel,this.styleMap=function(e,t){if(null===t)return{};for(var n={},r=Object.keys(t),i=0,a=r.length;i<a;i+=1){var l=r[i],u=String(t[l]);"!!"===l.slice(0,2)&&(l="tag:yaml.org,2002:"+l.slice(2));var c=e.compiledTypeMap.fallback[l];c&&o.call(c.styleAliases,u)&&(u=c.styleAliases[u]),n[l]=u}return n}(this.schema,e.styles||null),this.sortKeys=e.sortKeys||!1,this.lineWidth=e.lineWidth||80,this.noRefs=e.noRefs||!1,this.noCompatMode=e.noCompatMode||!1,this.condenseFlow=e.condenseFlow||!1,this.quotingType='"'===e.quotingType?2:1,this.forceQuotes=e.forceQuotes||!1,this.replacer="function"==typeof e.replacer?e.replacer:null,this.implicitTypes=this.schema.compiledImplicit,this.explicitTypes=this.schema.compiledExplicit,this.tag=null,this.result="",this.duplicates=[],this.usedDuplicates=null}function f(e,n){for(var r=t.repeat(" ",n),i=0,o="",a=e.length;i<a;){var l=void 0,u=e.indexOf("\n",i);-1===u?(l=e.slice(i),i=a):(l=e.slice(i,u+1),i=u+1),l.length&&"\n"!==l&&(o+=r),o+=l}return o}function d(e,n){return"\n"+t.repeat(" ",e.indent*n)}function h(e){return 32===e||9===e}function m(e){return e>=32&&e<=126||e>=161&&e<=55295&&8232!==e&&8233!==e||e>=57344&&e<=65533&&e!==a||e>=65536&&e<=1114111}function g(e){return m(e)&&e!==a&&13!==e&&10!==e}function y(e,t,n){var r=g(e),i=r&&!h(e);return(n?r:r&&44!==e&&91!==e&&93!==e&&123!==e&&125!==e)&&35!==e&&!(58===t&&!i)||g(t)&&!h(t)&&35===e||58===t&&i}function v(e,t){var n,r=e.charCodeAt(t);return r>=55296&&r<=56319&&t+1<e.length&&(n=e.charCodeAt(t+1))>=56320&&n<=57343?1024*(r-55296)+n-56320+65536:r}function b(e){return/^\n* /.test(e)}function A(e,t,n,r,i,o,l,u){var c,s,p=0,f=null,d=!1,g=!1,A=-1!==r,k=-1,w=m(s=v(e,0))&&s!==a&&!h(s)&&45!==s&&63!==s&&58!==s&&44!==s&&91!==s&&93!==s&&123!==s&&125!==s&&35!==s&&38!==s&&42!==s&&33!==s&&124!==s&&61!==s&&62!==s&&39!==s&&34!==s&&37!==s&&64!==s&&96!==s&&function(e){return!h(e)&&58!==e}(v(e,e.length-1));if(t||l)for(c=0;c<e.length;p>=65536?c+=2:c++){if(!m(p=v(e,c)))return 5;w=w&&y(p,f,u),f=p}else{for(c=0;c<e.length;p>=65536?c+=2:c++){if(10===(p=v(e,c)))d=!0,A&&(g=g||c-k-1>r&&" "!==e[k+1],k=c);else if(!m(p))return 5;w=w&&y(p,f,u),f=p}g=g||A&&c-k-1>r&&" "!==e[k+1]}return d||g?n>9&&b(e)?5:l?2===o?5:2:g?4:3:!w||l||i(e)?2===o?5:2:1}function k(e,t,r,i,o){e.dump=function(){if(0===t.length)return 2===e.quotingType?'""':"''";if(!e.noCompatMode&&(-1!==u.indexOf(t)||c.test(t)))return 2===e.quotingType?'"'+t+'"':"'"+t+"'";var a=e.indent*Math.max(1,r),p=-1===e.lineWidth?-1:Math.max(Math.min(e.lineWidth,40),e.lineWidth-a),d=i||e.flowLevel>-1&&r>=e.flowLevel;switch(A(t,d,e.indent,p,function(t){return function(e,t){for(var n=0,r=e.implicitTypes.length;n<r;n+=1)if(e.implicitTypes[n].resolve(t))return!0;return!1}(e,t)},e.quotingType,e.forceQuotes&&!i,o)){case 1:return t;case 2:return"'"+t.replace(/'/g,"''")+"'";case 3:return"|"+w(t,e.indent)+x(f(t,a));case 4:return">"+w(t,e.indent)+x(f(function(e,t){var n,r,i=/(\n+)([^\n]*)/g,o=(l=e.indexOf("\n"),l=-1!==l?l:e.length,i.lastIndex=l,C(e.slice(0,l),t)),a="\n"===e[0]||" "===e[0];var l;for(;r=i.exec(e);){var u=r[1],c=r[2];n=" "===c[0],o+=u+(a||n||""===c?"":"\n")+C(c,t),a=n}return o}(t,p),a));case 5:return'"'+function(e){for(var t="",n=0,r=0;r<e.length;n>=65536?r+=2:r++){n=v(e,r);var i=l[n];!i&&m(n)?(t+=e[r],n>=65536&&(t+=e[r+1])):t+=i||s(n)}return t}(t)+'"';default:throw new n("impossible error: invalid scalar style")}}()}function w(e,t){var n=b(e)?String(t):"",r="\n"===e[e.length-1];return n+(r&&("\n"===e[e.length-2]||"\n"===e)?"+":r?"":"-")+"\n"}function x(e){return"\n"===e[e.length-1]?e.slice(0,-1):e}function C(e,t){if(""===e||" "===e[0])return e;for(var n,r,i=/ [^ ]/g,o=0,a=0,l=0,u="";n=i.exec(e);)(l=n.index)-o>t&&(r=a>o?a:l,u+="\n"+e.slice(o,r),o=r+1),a=l;return u+="\n",e.length-o>t&&a>o?u+=e.slice(o,a)+"\n"+e.slice(a+1):u+=e.slice(o),u.slice(1)}function S(e,t,n,r){for(var i="",o=e.tag,a=0,l=n.length;a<l;a+=1){var u=n[a];e.replacer&&(u=e.replacer.call(n,String(a),u)),(T(e,t+1,u,!0,!0,!1,!0)||void 0===u&&T(e,t+1,null,!0,!0,!1,!0))&&(r&&""===i||(i+=d(e,t)),e.dump&&10===e.dump.charCodeAt(0)?i+="-":i+="- ",i+=e.dump)}e.tag=o,e.dump=i||"[]"}function I(t,r,a){for(var l=a?t.explicitTypes:t.implicitTypes,u=0,c=l.length;u<c;u+=1){var s=l[u];if((s.instanceOf||s.predicate)&&(!s.instanceOf||"object"===e(r)&&r instanceof s.instanceOf)&&(!s.predicate||s.predicate(r))){if(a?s.multi&&s.representName?t.tag=s.representName(r):t.tag=s.tag:t.tag="?",s.represent){var p=t.styleMap[s.tag]||s.defaultStyle,f=void 0;if("[object Function]"===i.call(s.represent))f=s.represent(r,p);else{if(!o.call(s.represent,p))throw new n("!<"+s.tag+'> tag resolver accepts not "'+p+'" style');f=s.represent[p](r,p)}t.dump=f}return!0}}return!1}function T(e,t,r,o,a,l,u){e.tag=null,e.dump=r,I(e,r,!1)||I(e,r,!0);var c=i.call(e.dump),s=o;o&&(o=e.flowLevel<0||e.flowLevel>t);var p,f,h="[object Object]"===c||"[object Array]"===c;if(h&&(f=-1!==(p=e.duplicates.indexOf(r))),(null!==e.tag&&"?"!==e.tag||f||2!==e.indent&&t>0)&&(a=!1),f&&e.usedDuplicates[p])e.dump="*ref_"+p;else{if(h&&f&&!e.usedDuplicates[p]&&(e.usedDuplicates[p]=!0),"[object Object]"===c)o&&0!==Object.keys(e.dump).length?(!function(e,t,r,i){var o="",a=e.tag,l=Object.keys(r);if(!0===e.sortKeys)l.sort();else if("function"==typeof e.sortKeys)l.sort(e.sortKeys);else if(e.sortKeys)throw new n("sortKeys must be a boolean or a function");for(var u=0,c=l.length;u<c;u+=1){var s="";i&&""===o||(s+=d(e,t));var p=l[u],f=r[p];if(e.replacer&&(f=e.replacer.call(r,p,f)),T(e,t+1,p,!0,!0,!0)){var h=null!==e.tag&&"?"!==e.tag||e.dump&&e.dump.length>1024;h&&(e.dump&&10===e.dump.charCodeAt(0)?s+="?":s+="? "),s+=e.dump,h&&(s+=d(e,t)),T(e,t+1,f,!0,h)&&(e.dump&&10===e.dump.charCodeAt(0)?s+=":":s+=": ",o+=s+=e.dump)}}e.tag=a,e.dump=o||"{}"}(e,t,e.dump,a),f&&(e.dump="&ref_"+p+e.dump)):(!function(e,t,n){for(var r="",i=e.tag,o=Object.keys(n),a=0,l=o.length;a<l;a+=1){var u="";""!==r&&(u+=", "),e.condenseFlow&&(u+='"');var c=o[a],s=n[c];e.replacer&&(s=e.replacer.call(n,c,s)),T(e,t,c,!1,!1)&&(e.dump.length>1024&&(u+="? "),u+=e.dump+(e.condenseFlow?'"':"")+":"+(e.condenseFlow?"":" "),T(e,t,s,!1,!1)&&(r+=u+=e.dump))}e.tag=i,e.dump="{"+r+"}"}(e,t,e.dump),f&&(e.dump="&ref_"+p+" "+e.dump));else if("[object Array]"===c)o&&0!==e.dump.length?(e.noArrayIndent&&!u&&t>0?S(e,t-1,e.dump,a):S(e,t,e.dump,a),f&&(e.dump="&ref_"+p+e.dump)):(!function(e,t,n){for(var r="",i=e.tag,o=0,a=n.length;o<a;o+=1){var l=n[o];e.replacer&&(l=e.replacer.call(n,String(o),l)),(T(e,t,l,!1,!1)||void 0===l&&T(e,t,null,!1,!1))&&(""!==r&&(r+=","+(e.condenseFlow?"":" ")),r+=e.dump)}e.tag=i,e.dump="["+r+"]"}(e,t,e.dump),f&&(e.dump="&ref_"+p+" "+e.dump));else{if("[object String]"!==c){if("[object Undefined]"===c)return!1;if(e.skipInvalid)return!1;throw new n("unacceptable kind of an object to dump "+c)}"?"!==e.tag&&k(e,e.dump,t,l,s)}if(null!==e.tag&&"?"!==e.tag){var m=encodeURI("!"===e.tag[0]?e.tag.slice(1):e.tag).replace(/!/g,"%21");m="!"===e.tag[0]?"!"+m:"tag:yaml.org,2002:"===m.slice(0,18)?"!!"+m.slice(18):"!<"+m+">",e.dump=m+" "+e.dump}}return!0}function O(e,t){var n=[],r=[];j(e,n,r);for(var i=r.length,o=0;o<i;o+=1)t.duplicates.push(n[r[o]]);t.usedDuplicates=new Array(i)}function j(t,n,r){if(null!==t&&"object"===e(t)){var i=n.indexOf(t);if(-1!==i)-1===r.indexOf(i)&&r.push(i);else if(n.push(t),Array.isArray(t))for(var o=0,a=t.length;o<a;o+=1)j(t[o],n,r);else for(var l=Object.keys(t),u=0,c=l.length;u<c;u+=1)j(t[l[u]],n,r)}}return be.dump=function(e,t){var n=new p(t=t||{});n.noRefs||O(e,n);var r=e;return n.replacer&&(r=n.replacer.call({"":r},"",r)),T(n,0,r,!0,!0)?n.dump+"\n":""},be}var ke=t(function(){if(ve)return $;ve=1;var e=ge(),t=Ae();function n(e,t){return function(){throw new Error("Function yaml."+e+" is removed in js-yaml 4. Use yaml."+t+" instead, which is now safe by default.")}}return $.Type=z(),$.Schema=Q(),$.FAILSAFE_SCHEMA=ne(),$.JSON_SCHEMA=le(),$.CORE_SCHEMA=ue(),$.DEFAULT_SCHEMA=me(),$.load=e.load,$.loadAll=e.loadAll,$.dump=t.dump,$.YAMLException=J(),$.types={binary:pe(),float:ae(),map:te(),null:re(),pairs:de(),set:he(),timestamp:ce(),bool:ie(),int:oe(),merge:se(),omap:fe(),seq:ee(),str:X()},$.safeLoad=n("safeLoad","load"),$.safeLoadAll=n("safeLoadAll","loadAll"),$.safeDump=n("safeDump","dump"),$}()),we=ke.Type,xe=ke.Schema,Ce=ke.FAILSAFE_SCHEMA,Se=ke.JSON_SCHEMA,Ie=ke.CORE_SCHEMA,Te=ke.DEFAULT_SCHEMA,Oe=ke.load,je=ke.loadAll,Me=ke.dump,Fe=ke.YAMLException,Ee=ke.types,Ne=ke.safeLoad,Le=ke.safeLoadAll,_e=ke.safeDump;e.CORE_SCHEMA=Ie,e.DEFAULT_SCHEMA=Te,e.FAILSAFE_SCHEMA=Ce,e.JSON_SCHEMA=Se,e.Schema=xe,e.Type=we,e.YAMLException=Fe,e.default=ke,e.dump=Me,e.load=Oe,e.loadAll=je,e.safeDump=_e,e.safeLoad=Ne,e.safeLoadAll=Le,e.types=Ee,Object.defineProperty(e,"__esModule",{value:!0})});
+//# sourceMappingURL=js-yaml.min.js.map
+
+</script>
+
+<script>
+/* lab34/health report renderer.
+ *
+ * Everything on the page is built from the YAML document embedded in this
+ * file. Nothing is hard-coded here except layout: colours come from the
+ * document's `theme`, section titles and ordering from its `navigation`, and
+ * every value from the section it belongs to. Edit the YAML, reload, and the
+ * report changes.
+ */
+(function () {
+  'use strict';
+
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+
+  // --- tiny DOM helpers ----------------------------------------------------
+
+  function el(tag, props, children) {
+    var node = document.createElement(tag);
+    applyProps(node, props);
+    append(node, children);
+    return node;
+  }
+
+  function svg(tag, props, children) {
+    var node = document.createElementNS(SVG_NS, tag);
+    for (var key in props || {}) {
+      if (props[key] !== undefined && props[key] !== null) node.setAttribute(key, String(props[key]));
+    }
+    append(node, children);
+    return node;
+  }
+
+  function applyProps(node, props) {
+    for (var key in props || {}) {
+      var value = props[key];
+      if (value === undefined || value === null) continue;
+      if (key === 'class') node.className = value;
+      else if (key === 'text') node.textContent = value;
+      else if (key === 'style') { for (var s in value) node.style.setProperty(s, value[s]); }
+      else if (key.slice(0, 2) === 'on') node.addEventListener(key.slice(2), value);
+      else node.setAttribute(key, String(value));
+    }
+  }
+
+  function append(node, children) {
+    if (children === undefined || children === null) return;
+    var list = Array.isArray(children) ? children : [children];
+    for (var i = 0; i < list.length; i += 1) {
+      var child = list[i];
+      if (child === undefined || child === null || child === false) continue;
+      node.appendChild(typeof child === 'object' ? child : document.createTextNode(String(child)));
+    }
+  }
+
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+  // --- document ------------------------------------------------------------
+
+  function readDocument() {
+    var holder = document.getElementById('report-data');
+    if (!holder) throw new Error('report data is missing');
+    // The one transform applied when embedding: a literal "</script" inside a
+    // value would otherwise close this block early.
+    var text = holder.textContent.replace(/<\\\/(script)/gi, '</$1');
+    return window.jsyaml.load(text);
+  }
+
+  var doc = readDocument();
+  var theme = doc.theme || {};
+
+  function indicatorColor(name) {
+    return (theme.indicator || {})[name] || (theme.palette || {}).text_muted || '#9B9797';
+  }
+
+  function directionColor(name) {
+    return (theme.direction || {})[name] || (theme.palette || {}).text_faint || '#C9C6C2';
+  }
+
+  function ageColor(section, slug) {
+    var found = (section.age_indicators || []).filter(function (i) { return i.slug === slug; })[0];
+    return found ? found.color : (theme.palette || {}).text_strong;
+  }
+
+  function applyTheme() {
+    var root = document.documentElement;
+    var palette = theme.palette || {};
+    for (var token in palette) root.style.setProperty('--' + token.replace(/_/g, '-'), palette[token]);
+  }
+
+  // --- charts --------------------------------------------------------------
+
+  /** Sparkline points across a 100x26 box, skipping runs with no value. */
+  function sparkPoints(series) {
+    var points = [];
+    var values = series.filter(function (v) { return typeof v === 'number'; });
+    if (values.length === 0) return '';
+    var min = Math.min.apply(null, values);
+    var max = Math.max.apply(null, values);
+    var span = (max - min) || 1;
+    var lastIndex = Math.max(1, series.length - 1);
+
+    for (var i = 0; i < series.length; i += 1) {
+      if (typeof series[i] !== 'number') continue;
+      var x = (i / lastIndex) * 100;
+      var y = 24 - ((series[i] - min) / span) * 22;
+      points.push(x.toFixed(2) + ',' + y.toFixed(2));
+    }
+    return points.join(' ');
+  }
+
+  function sparkline(series, color) {
+    var points = sparkPoints(series);
+    if (!points) return null;
+    return svg('svg', {
+      viewBox: '0 0 100 26', width: 100, height: 26,
+      preserveAspectRatio: 'none', 'aria-hidden': 'true',
+    }, svg('polyline', {
+      points: points, fill: 'none', stroke: color,
+      'stroke-width': 1.4, 'vector-effect': 'non-scaling-stroke',
+    }));
+  }
+
+  /** One bar per run, coloured by how that run moved against the one before. */
+  function trendBars(trend, runs) {
+    var series = trend.series || [];
+    var numbers = series.filter(function (v) { return typeof v === 'number'; });
+    var max = numbers.length ? Math.max.apply(null, numbers) : 1;
+    var bars = [];
+
+    for (var i = 0; i < series.length; i += 1) {
+      var value = series[i];
+      var run = runs[i] || {};
+      if (typeof value !== 'number') {
+        bars.push(el('span', {
+          class: 'trend__bar',
+          style: { height: '8px', background: (theme.palette || {}).border_soft },
+          title: 'run #' + (run.number || '?') + ': not recorded',
+        }));
+        continue;
+      }
+
+      var previous = null;
+      for (var b = i - 1; b >= 0; b -= 1) {
+        if (typeof series[b] === 'number') { previous = series[b]; break; }
+      }
+      var change = previous === null ? 0 : value - previous;
+      var direction = change === 0 ? 'flat'
+        : (trend.lower_is_better ? change < 0 : change > 0) ? 'better' : 'worse';
+
+      bars.push(el('span', {
+        class: 'trend__bar',
+        style: {
+          height: Math.max(8, Math.round((value / (max || 1)) * 34)) + 'px',
+          background: directionColor(direction),
+        },
+        title: 'run #' + (run.number || '?') + ': ' + value + (trend.unit || ''),
+      }));
+    }
+    return bars;
+  }
+
+  // --- sections ------------------------------------------------------------
+
+  function renderMasthead(meta) {
+    return el('div', { class: 'masthead' }, [
+      el('div', { class: 'masthead__identity' }, [
+        el('span', { class: 'masthead__wordmark', text: meta.title }),
+        el('span', { class: 'masthead__meta', text: meta.meta_display }),
+      ]),
+      meta.client_label ? el('span', { class: 'masthead__client', text: meta.client_label }) : null,
+    ]);
+  }
+
+  function renderContents(navigation) {
+    if (!navigation || navigation.length === 0) return null;
+    var links = navigation.map(function (entry) {
+      return el('a', { href: '#' + entry.id, text: entry.index + ' ' + entry.label });
+    });
+    return el('nav', { class: 'contents' },
+      [el('span', { class: 'contents__label', text: 'CONTENTS' })].concat(links));
+  }
+
+  /** Sync failures are shown, not swallowed: a partial report says so. */
+  function renderNotice(warnings) {
+    if (!warnings || warnings.length === 0) return null;
+    return el('div', { class: 'notice' }, [
+      el('div', {
+        class: 'notice__title',
+        text: warnings.length === 1
+          ? 'One source did not sync for this run; its section shows the last data collected.'
+          : warnings.length + ' sources did not sync for this run; their sections show the last data collected.',
+      }),
+      el('ul', {}, warnings.map(function (w) { return el('li', { text: w }); })),
+    ]);
+  }
+
+  function renderSummary(section) {
+    if (!section || !section.kpis || section.kpis.length === 0) return null;
+
+    var cards = section.kpis.map(function (kpi) {
+      var color = directionColor((kpi.delta || {}).direction);
+      var chart = sparkline(kpi.series || [], color);
+      return el('div', { class: 'kpi' }, [
+        el('div', { class: 'kpi__label', text: kpi.label }),
+        el('div', { class: 'kpi__figure' }, [
+          el('span', { class: 'kpi__value', text: kpi.display }),
+          el('span', { class: 'kpi__unit', text: kpi.unit }),
+        ]),
+        el('div', { class: 'kpi__trend' }, [
+          el('span', { class: 'kpi__delta', style: { color: color }, text: (kpi.delta || {}).display }),
+          chart,
+        ]),
+      ]);
+    });
+
+    return el('section', { class: 'section', id: section.id }, [
+      el('div', { class: 'section__eyebrow', style: { 'margin-bottom': '20px' },
+        text: section.index + ' — ' + section.title }),
+      el('div', { class: 'kpis' }, cards),
+      section.note ? el('div', { class: 'section__note', text: section.note }) : null,
+    ]);
+  }
+
+  function renderEvolution(section, runs) {
+    if (!section || !section.enabled || !section.trends || section.trends.length === 0) return null;
+
+    var rows = section.trends.map(function (trend) {
+      return el('div', { class: 'trend' }, [
+        el('div', {}, [
+          el('div', { class: 'trend__name', text: trend.name }),
+          el('div', { class: 'trend__hint', text: trend.hint }),
+        ]),
+        el('div', { class: 'trend__bars' }, trendBars(trend, runs)),
+        el('div', { class: 'trend__current', text: (trend.current || {}).display }),
+        el('div', {
+          class: 'trend__delta',
+          style: { color: directionColor((trend.delta || {}).direction) },
+          text: (trend.delta || {}).display,
+        }),
+      ]);
+    });
+
+    var legend = (section.legend || []).map(function (item) {
+      return item.direction
+        ? el('span', { style: { color: directionColor(item.direction) }, text: '■ ' + item.label })
+        : el('span', { text: item.label });
+    });
+
+    return el('section', { class: 'section', id: section.id }, [
+      el('div', { class: 'section__head' }, [
+        el('div', { class: 'section__eyebrow', text: section.index + ' — ' + section.title }),
+        el('div', { class: 'section__aside', text: section.range_display }),
+      ]),
+      el('div', { class: 'panel' }, rows.concat([el('div', { class: 'legend' }, legend)])),
+    ]);
+  }
+
+  var SORT_VALUES = {
+    repository: function (pr) { return pr.repository; },
+    title: function (pr) { return pr.title; },
+    author: function (pr) { return (pr.author || {}).name; },
+    age: function (pr) { return pr.age_hours; },
+    changes: function (pr) { return (pr.changes || {}).lines_total; },
+    commits: function (pr) { return (pr.commits || []).length; },
+  };
+
+  function renderPullRequests(section) {
+    if (!section) return null;
+
+    var sort = section.default_sort || { key: 'age', direction: 'desc' };
+    var open = {};
+    // The oldest pull request is the one worth reading first, so it starts open.
+    if (section.items && section.items.length > 0) open[section.items[0].id] = true;
+
+    var body = el('div', {});
+
+    function draw() {
+      clear(body);
+
+      var items = (section.items || []).slice();
+      var read = SORT_VALUES[sort.key];
+      if (read) {
+        items.sort(function (a, b) {
+          var left = read(a);
+          var right = read(b);
+          var compared = typeof left === 'number' && typeof right === 'number'
+            ? left - right
+            : String(left).localeCompare(String(right));
+          return sort.direction === 'asc' ? compared : -compared;
+        });
+      }
+
+      var headers = (section.columns || []).map(function (column) {
+        var arrow = column.sortable && column.key === sort.key
+          ? (sort.direction === 'asc' ? ' ↑' : ' ↓') : '';
+        var cell = el(column.sortable ? 'button' : 'div', {
+          class: 'row__head' + (column.sortable ? ' row__head--sortable' : '')
+            + (column.align === 'right' ? ' row__head--right' : ''),
+          type: column.sortable ? 'button' : null,
+          title: column.sortable ? 'Sort by ' + column.label : null,
+        }, [column.label, el('span', { class: 'row__arrow', text: arrow })]);
+
+        if (column.sortable) {
+          cell.addEventListener('click', function () {
+            sort = sort.key === column.key
+              ? { key: column.key, direction: sort.direction === 'desc' ? 'asc' : 'desc' }
+              : { key: column.key, direction: 'desc' };
+            draw();
+          });
+        }
+        return cell;
+      });
+
+      body.appendChild(el('div', { class: 'row row--head' }, headers));
+
+      if (items.length === 0) {
+        body.appendChild(el('div', { class: 'empty', style: { border: 'none' } },
+          el('div', { class: 'empty__message', text: 'No pull requests to show.' })));
+        return;
+      }
+
+      items.forEach(function (pr) { body.appendChild(renderPullRequest(pr, section, open, draw)); });
+    }
+
+    draw();
+
+    var flags = (section.age_indicators || []).map(function (indicator) {
+      return el('span', { style: { color: indicator.color }, text: '● ' + indicator.label });
+    });
+
+    return el('section', { class: 'section', id: section.id }, [
+      el('div', { class: 'section__head', style: { 'margin-bottom': '6px' } }, [
+        el('div', { class: 'section__title', text: section.title }),
+        el('div', { class: 'flags' }, flags),
+      ]),
+      el('div', { class: 'section__headline', text: (section.headline || {}).display }),
+      el('div', { class: 'table' }, el('div', { class: 'table__inner' }, body)),
+    ]);
+  }
+
+  function renderPullRequest(pr, section, open, redraw) {
+    var isOpen = !!open[pr.id];
+
+    var summary = el('div', { class: 'row pr__summary', role: 'button', tabindex: '0' }, [
+      el('div', { class: 'mono', text: pr.repository }),
+      el('div', {}, [
+        el('div', { class: 'pr__title', text: pr.title }),
+        el('div', { class: 'pr__branches', text: pr.branches_display }),
+      ]),
+      el('div', { class: 'mono', text: (pr.author || {}).name }),
+      el('div', {
+        class: 'mono mono--right',
+        style: { color: ageColor(section, pr.age_indicator) },
+        text: pr.age_display,
+      }),
+      el('div', { class: 'mono mono--right', text: (pr.changes || {}).display }),
+      el('div', { class: 'mono mono--right', text: String((pr.commits || []).length) }),
+      el('div', { class: 'pr__reviewers' }, (pr.reviewers || []).map(function (reviewer) {
+        var color = indicatorColor(reviewer.indicator);
+        return el('span', { class: 'chip', style: { color: color, 'border-color': color }, text: reviewer.label });
+      })),
+      el('div', { class: 'pr__chevron', text: isOpen ? '▲ less' : '▼ more' }),
+    ]);
+
+    function toggle() { open[pr.id] = !open[pr.id]; redraw(); }
+    summary.addEventListener('click', toggle);
+    summary.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggle(); }
+    });
+
+    var children = [summary];
+
+    if (isOpen) {
+      var commits = (pr.commits || []).map(function (commit) {
+        return el('div', { class: 'commit' }, [
+          el('span', { class: 'commit__sha', text: commit.sha }),
+          el('span', { class: 'commit__message', text: commit.message }),
+          el('span', { class: 'commit__spacer' }),
+          el('span', { class: 'commit__when', text: commit.when_display }),
+        ]);
+      });
+
+      var facts = (pr.facts || []).map(function (fact) {
+        return el('div', { class: 'fact' }, [
+          el('span', { class: 'fact__key', text: fact.key }),
+          el('span', { style: { color: indicatorColor(fact.indicator) }, text: fact.value }),
+        ]);
+      });
+
+      children.push(el('div', { class: 'pr__detail' }, [
+        el('div', {}, [
+          el('div', { class: 'detail__heading', text: 'Commits — ' + (pr.commits || []).length }),
+          el('div', { class: 'commits' }, commits.length ? commits
+            : el('div', { class: 'commit__when', text: 'No commits recorded.' })),
+        ]),
+        el('div', {}, [
+          el('div', { class: 'detail__heading', text: 'Review & changes' }),
+          el('div', { class: 'facts' }, facts),
+          pr.url ? el('div', { style: { 'margin-top': '10px', 'font-family': 'var(--mono)', 'font-size': '12px' } },
+            el('a', { href: pr.url, target: '_blank', rel: 'noreferrer noopener', text: 'Open in Bitbucket ↗' })) : null,
+        ]),
+      ]));
+    }
+
+    return el('div', { class: 'pr' }, children);
+  }
+
+  function renderCicd(section) {
+    if (!section) return null;
+    var outcomes = section.step_outcomes || {};
+
+    var headers = (section.columns || []).map(function (column) {
+      return el('div', {
+        class: 'row__head' + (column.align === 'right' ? ' row__head--right' : ''),
+        text: column.label,
+      });
+    });
+
+    var rows = (section.items || []).map(function (pipeline) {
+      var steps = (pipeline.steps || []).map(function (step) {
+        var indicator = (outcomes[step.outcome] || {}).indicator || 'neutral';
+        return el('span', {
+          class: 'step',
+          style: { background: indicatorColor(indicator) },
+          title: step.name + ' — ' + step.outcome,
+        });
+      });
+
+      return el('div', { class: 'row pipeline' }, [
+        el('div', { class: 'mono', text: pipeline.repository }),
+        el('div', {}, [
+          el('div', { class: 'pipeline__name', text: pipeline.name }),
+          el('div', { class: 'pipeline__branch', text: pipeline.branch }),
+        ]),
+        el('div', { class: 'mono', text: pipeline.triggered_by }),
+        el('div', { class: 'pipeline__when', text: pipeline.when_display }),
+        el('div', { class: 'mono mono--right', text: pipeline.duration_display }),
+        el('div', {
+          class: 'pipeline__outcome',
+          style: { color: indicatorColor(pipeline.outcome_indicator) },
+          text: pipeline.outcome,
+        }),
+        el('div', {}, [
+          el('div', { class: 'steps' }, steps),
+          el('div', {
+            class: 'pipeline__note',
+            style: { color: indicatorColor((pipeline.note || {}).indicator) },
+            text: (pipeline.note || {}).display,
+          }),
+        ]),
+      ]);
+    });
+
+    var inner = el('div', { class: 'table__inner' },
+      [el('div', { class: 'row row--head' }, headers)].concat(
+        rows.length ? rows : [el('div', { class: 'empty', style: { border: 'none' } },
+          el('div', { class: 'empty__message', text: 'No pipelines in this window.' }))],
+      ));
+
+    return el('section', { class: 'section', id: section.id }, [
+      el('div', { class: 'section__title', style: { 'margin-bottom': '6px' }, text: section.title }),
+      el('div', { class: 'section__headline', text: (section.headline || {}).display }),
+      el('div', { class: 'table table--cicd' }, inner),
+    ]);
+  }
+
+  function renderTesting(section) {
+    if (!section) return null;
+    return el('section', { class: 'section', id: section.id }, [
+      el('div', { class: 'section__title', style: { 'margin-bottom': '16px' }, text: section.title }),
+      el('div', { class: 'empty' }, [
+        el('div', { class: 'empty__message', text: (section.placeholder || {}).message }),
+        el('div', { class: 'empty__hint', text: (section.placeholder || {}).hint }),
+      ]),
+    ]);
+  }
+
+  function renderJira(section) {
+    if (!section || !section.items || section.items.length === 0) return null;
+
+    var timeline = section.timeline || {};
+    var query = '';
+    var groups = el('div', {});
+    var count = el('span', { class: 'search__count', text: (section.totals || {}).display });
+
+    function matches(ticket) {
+      if (!query) return true;
+      var fields = (section.search || {}).fields || ['key', 'title'];
+      return fields.some(function (field) {
+        return String(ticket[field] || '').toLowerCase().indexOf(query) >= 0;
+      });
+    }
+
+    function draw() {
+      clear(groups);
+      var shown = 0;
+      var total = 0;
+
+      section.items.forEach(function (group) {
+        var tickets = (group.tickets || []).filter(function (ticket) {
+          total += 1;
+          var hit = matches(ticket);
+          if (hit) shown += 1;
+          return hit;
+        });
+
+        groups.appendChild(el('div', { class: 'summary-group' }, [
+          el('div', { class: 'summary-group__head' }, [
+            el('div', { class: 'summary-group__title', text: group.title }),
+            el('div', { class: 'summary-group__meta', text: group.count_display + ' · ' + group.jql }),
+          ]),
+          el('div', { class: 'tickets' }, tickets.map(function (ticket) {
+            return renderTicket(ticket, section, timeline);
+          })),
+          tickets.length === 0
+            ? el('div', { class: 'summary-group__empty', text: group.empty_display })
+            : null,
+        ]));
+      });
+
+      count.textContent = query
+        ? shown + ' of ' + total + ' tickets'
+        : (section.totals || {}).display;
+    }
+
+    draw();
+
+    var search = (section.search || {}).enabled
+      ? el('div', { class: 'search' }, [
+        el('input', {
+          type: 'search',
+          placeholder: (section.search || {}).placeholder || 'Search tickets…',
+          'aria-label': 'Search tickets',
+          oninput: function (event) { query = event.target.value.trim().toLowerCase(); draw(); },
+        }),
+        count,
+      ])
+      : null;
+
+    return el('section', { class: 'section', id: section.id }, [
+      el('div', { class: 'section__head', style: { 'margin-bottom': '4px', 'align-items': 'center' } }, [
+        el('div', { class: 'section__eyebrow', text: section.index + ' — ' + section.title }),
+        search,
+      ]),
+      groups,
+    ]);
+  }
+
+  function renderTicket(ticket, section, timeline) {
+    var typeIndicator = ((section.types || {})[ticket.type] || {}).indicator || 'neutral';
+    var typeColor = indicatorColor(typeIndicator);
+    var laneColors = theme.lanes || {};
+    var total = (ticket.timeline || {}).total_hours || 1;
+
+    var lanes = ((ticket.timeline || {}).lanes || []).map(function (lane) {
+      var bars = (lane.segments || []).map(function (segment) {
+        return el('div', {
+          class: 'lane__bar',
+          style: {
+            left: ((segment.start_hours / total) * 100).toFixed(3) + '%',
+            width: Math.max(1.5, (segment.duration_hours / total) * 100).toFixed(3) + '%',
+            background: laneColors[lane.status] || indicatorColor('neutral'),
+          },
+          title: segment.title,
+        });
+      });
+
+      var timeColor = lane.emphasis === 'empty' ? 'var(--text-faint)'
+        : lane.emphasis === 'heavy' ? indicatorColor('problem') : 'var(--text-strong)';
+
+      return el('div', { class: 'lane' }, [
+        el('div', { class: 'lane__status', text: lane.status }),
+        el('div', { class: 'lane__track' }, bars),
+        el('div', { class: 'lane__who', text: lane.who, title: lane.who }),
+        el('div', {
+          class: 'lane__time' + (lane.emphasis === 'heavy' ? ' lane__time--heavy' : ''),
+          style: { color: timeColor },
+          text: lane.time_display,
+        }),
+      ]);
+    });
+
+    return el('div', { class: 'ticket' }, [
+      el('div', { class: 'ticket__head' }, [
+        el('span', { class: 'ticket__type', style: { color: typeColor, 'border-color': typeColor }, text: ticket.type }),
+        ticket.url
+          ? el('a', { class: 'ticket__key', href: ticket.url, target: '_blank', rel: 'noreferrer noopener', text: ticket.key })
+          : el('span', { class: 'ticket__key', text: ticket.key }),
+        el('span', { class: 'ticket__title', text: ticket.title }),
+        el('span', { class: 'ticket__spacer' }),
+        el('span', { class: 'ticket__status', text: ticket.status }),
+        el('span', { class: 'ticket__meta', text: ticket.meta_display }),
+      ]),
+      ticket.description ? el('div', { class: 'ticket__description', text: ticket.description }) : null,
+      el('div', { class: 'ticket__timeline' }, [
+        el('div', { class: 'lanes' }, lanes),
+        el('div', { class: 'axis' }, [
+          el('div', {}),
+          el('div', { class: 'axis__scale' }, [
+            el('span', { text: (ticket.timeline || {}).axis_start_display }),
+            el('span', { text: (ticket.timeline || {}).axis_end_display }),
+          ]),
+          el('div', {}), el('div', {}),
+        ]),
+      ]),
+    ]);
+  }
+
+  function renderColophon(meta) {
+    var footer = meta.footer || {};
+    return el('div', { class: 'colophon' }, [
+      el('span', { text: footer.left }),
+      el('span', { text: footer.right }),
+    ]);
+  }
+
+  // --- mount ---------------------------------------------------------------
+
+  function render() {
+    applyTheme();
+    var meta = doc.report || {};
+    document.title = (meta.client_label ? meta.client_label + ' — ' : '') + (meta.title || 'lab34/health');
+
+    var sheet = el('div', { class: 'sheet' }, [
+      renderMasthead(meta),
+      renderContents(doc.navigation),
+      renderNotice(meta.warnings),
+      renderSummary(doc.summary),
+      renderEvolution(doc.evolution, doc.runs || []),
+      renderPullRequests(doc.pull_requests),
+      renderCicd(doc.cicd),
+      renderTesting(doc.testing),
+      renderJira(doc.jira_summaries),
+      renderColophon(meta),
+    ]);
+
+    var page = el('div', { class: 'page' }, sheet);
+    var root = document.getElementById('report');
+    clear(root);
+    root.appendChild(page);
+  }
+
+  try {
+    render();
+  } catch (error) {
+    var root = document.getElementById('report');
+    if (root) {
+      root.textContent = 'Could not render this report: ' + error.message;
+      root.setAttribute('style', 'padding:40px;font-family:monospace;color:#B3402F');
+    }
+    throw error;
+  }
+})();
+
+</script>
+</body>
+</html>

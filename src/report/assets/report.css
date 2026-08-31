@@ -1,0 +1,303 @@
+/* lab34/health report — the design system of the report template, as classes.
+   Colour values come from the YAML's `theme` block at render time; the custom
+   properties below are the fallbacks used before that is applied. */
+
+:root {
+  color-scheme: light;
+  --background: #E9E7E4;
+  --surface: #F3F2F2;
+  --surface-raised: #FFFFFF;
+  --surface-sunken: #EEEBE7;
+  --border: #D8D5D1;
+  --border-soft: #EEEBE7;
+  --text: #201F1D;
+  --text-strong: #2D2B2B;
+  --text-muted: #9B9797;
+  --text-faint: #C9C6C2;
+  --accent: #B68235;
+  --accent-soft: #EFE4D2;
+  --accent-deep: #7A5A26;
+  --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  --gutter: clamp(16px, 3.5vw, 40px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { background: var(--background); }
+
+body {
+  font-family: var(--sans);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--text); }
+::selection { background: var(--accent-soft); }
+input:focus-visible, [tabindex]:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.page { max-width: 1240px; margin: 0 auto; padding: clamp(12px, 3vw, 40px); }
+.sheet { background: var(--surface); border: 1px solid var(--border); }
+
+/* --- header --------------------------------------------------------------- */
+
+.masthead {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: 12px 16px; padding: 24px var(--gutter); border-bottom: 1px solid var(--border);
+}
+.masthead__identity { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.masthead__wordmark { font-family: var(--mono); font-weight: 500; font-size: 18px; }
+.masthead__meta { font-family: var(--mono); font-size: 13px; color: var(--text-muted); }
+.masthead__client {
+  font-family: var(--sans); font-weight: 600; font-size: 14px; letter-spacing: 0.04em;
+  border: 1px dashed var(--text-muted); padding: 5px 12px;
+}
+
+.contents {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 28px;
+  padding: 14px var(--gutter); border-bottom: 1px solid var(--border);
+  background: var(--surface-sunken); position: sticky; top: 0; z-index: 5;
+  font-family: var(--mono); font-size: 12.5px;
+}
+.contents__label { color: var(--text-muted); letter-spacing: 0.06em; }
+
+.notice {
+  padding: 12px var(--gutter); border-bottom: 1px solid var(--border);
+  background: #F6EDE9; font-family: var(--mono); font-size: 12.5px; color: #7A2F22;
+}
+.notice__title { font-weight: 500; }
+.notice ul { margin: 6px 0 0 18px; }
+
+/* --- sections ------------------------------------------------------------- */
+
+/* Jumping to a section must not park its heading under the sticky contents
+   bar, so anchors stop clear of it. */
+.section { padding: 28px var(--gutter); border-bottom: 1px solid var(--border); scroll-margin-top: 52px; }
+.section:last-of-type { border-bottom: none; }
+
+.section__eyebrow {
+  font-family: var(--sans); font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.section__title { font-family: var(--sans); font-size: 22px; font-weight: 600; }
+.section__head {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 10px 20px; margin-bottom: 20px;
+}
+.section__aside { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.section__headline {
+  font-family: var(--mono); font-size: 13px; color: var(--text-muted); margin-bottom: 20px;
+}
+
+/* --- 01 summary ----------------------------------------------------------- */
+
+.kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1px; background: var(--border); border: 1px solid var(--border);
+}
+.kpi { background: var(--surface-raised); padding: 18px 20px 16px; }
+.kpi__label {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.kpi__figure { display: flex; align-items: baseline; gap: 6px; margin-top: 10px; }
+.kpi__value {
+  font-family: var(--sans); font-size: 30px; font-weight: 600;
+  font-feature-settings: 'tnum'; line-height: 1;
+}
+.kpi__unit { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.kpi__trend {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; margin-top: 12px;
+}
+.kpi__delta { font-family: var(--mono); font-size: 12px; }
+.section__note {
+  margin-top: 14px; font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+}
+
+/* --- 02 evolution --------------------------------------------------------- */
+
+.panel { background: var(--surface-raised); border: 1px solid var(--border); }
+
+.trend {
+  display: grid; grid-template-columns: minmax(180px, 1fr) minmax(200px, 2fr) 92px 92px;
+  gap: 12px 20px; align-items: center; padding: 14px 20px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.trend__name { font-size: 14px; font-weight: 600; }
+.trend__hint { font-family: var(--mono); font-size: 11.5px; color: var(--text-muted); }
+.trend__bars { display: flex; align-items: flex-end; gap: 3px; height: 34px; }
+.trend__bar { flex: 1; }
+.trend__current {
+  font-family: var(--mono); font-size: 14px; font-feature-settings: 'tnum'; text-align: right;
+}
+.trend__delta { font-family: var(--mono); font-size: 12.5px; text-align: right; }
+.legend {
+  display: flex; flex-wrap: wrap; gap: 6px 22px; padding: 12px 20px;
+  font-family: var(--mono); font-size: 11.5px; color: var(--text-muted);
+}
+
+/* --- 03 pull requests ----------------------------------------------------- */
+
+.flags { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--mono); font-size: 12px; }
+
+/* The fixed tracks below, plus the 14px gaps and the row's 20px side padding,
+   come to 1066px — exactly the width of the sheet's content column at the
+   1240px page maximum, so a desktop reader gets the whole table with no
+   horizontal scrolling and narrower viewports scroll it rather than squashing
+   the columns into unreadability. */
+.table { overflow-x: auto; background: var(--surface-raised); border: 1px solid var(--border); }
+.table__inner { min-width: 1066px; }
+.table--cicd .table__inner { min-width: 1022px; }
+
+.row {
+  display: grid; grid-template-columns: 110px minmax(240px, 1fr) 96px 84px 100px 76px 150px 72px;
+  gap: 14px; padding: 14px 20px; align-items: baseline;
+}
+.row--head {
+  padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+.table--cicd .row {
+  grid-template-columns: 118px minmax(200px, 1fr) 150px 100px 96px 84px minmax(150px, 1fr);
+  align-items: center;
+}
+.row__head {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--text-strong); user-select: none;
+  background: none; border: 0; text-align: left; padding: 0;
+}
+.row__head--sortable { cursor: pointer; }
+.row__head--right { text-align: right; }
+.row__arrow { color: var(--accent); }
+
+.pr { border-bottom: 1px solid var(--border-soft); }
+.pr__summary { cursor: pointer; }
+.pr__summary:hover { background: var(--surface-sunken); }
+.mono { font-family: var(--mono); font-size: 12.5px; color: var(--text-strong); }
+.mono--right { text-align: right; font-feature-settings: 'tnum'; }
+.pr__title { font-size: 14px; font-weight: 600; }
+.pr__branches { font-family: var(--mono); font-size: 11.5px; color: var(--text-muted); }
+.pr__reviewers { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { font-family: var(--mono); font-size: 11px; padding: 2px 6px; border: 1px solid; }
+.pr__chevron { font-family: var(--mono); font-size: 11.5px; color: var(--accent); text-align: right; }
+
+.pr__detail {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px; padding: 4px 20px 22px;
+}
+.detail__heading {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;
+}
+.commits { display: flex; flex-direction: column; gap: 6px; }
+.commit { display: flex; gap: 12px; font-family: var(--mono); font-size: 12px; }
+.commit__sha { color: var(--accent); flex-shrink: 0; }
+.commit__message { color: var(--text-strong); }
+.commit__spacer { flex: 1; }
+.commit__when { color: var(--text-muted); flex-shrink: 0; }
+.facts { display: flex; flex-direction: column; gap: 8px; font-family: var(--mono); font-size: 12.5px; }
+.fact { display: flex; gap: 14px; border-bottom: 1px solid var(--border-soft); padding-bottom: 6px; }
+.fact__key { color: var(--text-muted); width: 108px; flex-shrink: 0; }
+
+/* --- 04 cicd -------------------------------------------------------------- */
+
+.pipeline { border-bottom: 1px solid var(--border-soft); }
+.pipeline__name { font-size: 14px; font-weight: 600; }
+.pipeline__branch { font-family: var(--mono); font-size: 11.5px; color: var(--text-muted); }
+.pipeline__when { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.pipeline__outcome { font-family: var(--mono); font-size: 12px; font-weight: 500; }
+.steps { display: flex; gap: 3px; margin-bottom: 6px; }
+.step { flex: 1; height: 10px; }
+.pipeline__note { font-family: var(--mono); font-size: 11.5px; }
+
+/* --- 05 testing ----------------------------------------------------------- */
+
+.empty {
+  background: var(--surface-raised); border: 1px dashed var(--text-faint);
+  padding: 30px 24px; text-align: center;
+}
+.empty__message { font-family: var(--mono); font-size: 13px; color: var(--text-muted); }
+.empty__hint { font-family: var(--mono); font-size: 12px; color: var(--text-faint); margin-top: 8px; }
+
+/* --- 06 jira summaries ---------------------------------------------------- */
+
+.search { display: flex; align-items: center; gap: 10px; }
+.search input {
+  font-family: var(--mono); font-size: 12.5px; padding: 7px 12px; width: 240px;
+  background: var(--surface-raised); border: 1px solid var(--border);
+  color: var(--text); border-radius: 0;
+}
+.search__count { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+
+.summary-group { margin-top: 28px; }
+.summary-group__head {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 8px 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.summary-group__title { font-family: var(--sans); font-size: 20px; font-weight: 600; }
+.summary-group__meta { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.tickets { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+
+.ticket { background: var(--surface-raised); border: 1px solid var(--border); }
+.ticket__head {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px;
+  padding: 14px 20px; border-bottom: 1px solid var(--border-soft);
+}
+.ticket__type { font-family: var(--mono); font-size: 11px; padding: 2px 7px; border: 1px solid; }
+.ticket__key { font-family: var(--mono); font-size: 12.5px; color: var(--accent); }
+.ticket__title { font-size: 15px; font-weight: 600; }
+.ticket__spacer { flex: 1; }
+.ticket__status {
+  font-family: var(--mono); font-size: 11.5px; color: var(--accent-deep);
+  background: var(--accent-soft); padding: 2px 8px;
+}
+.ticket__meta { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.ticket__description {
+  padding: 14px 20px 4px; font-size: 13.5px; color: var(--text-strong);
+  max-width: 78ch; text-wrap: pretty;
+}
+.ticket__timeline { padding: 14px 20px 18px; }
+.lanes { display: flex; flex-direction: column; gap: 4px; }
+.lane { display: grid; grid-template-columns: 120px 1fr 110px 56px; gap: 12px; align-items: center; }
+.lane__status { font-family: var(--mono); font-size: 11.5px; color: var(--text-muted); text-align: right; }
+.lane__track {
+  position: relative; height: 18px; background: var(--surface);
+  border-left: 1px solid #E2DFDB; overflow: hidden;
+}
+.lane__bar { position: absolute; top: 3px; height: 12px; }
+.lane__who {
+  font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lane__time {
+  font-family: var(--mono); font-size: 11.5px; font-feature-settings: 'tnum'; text-align: right;
+}
+.lane__time--heavy { font-weight: 500; }
+.axis { display: grid; grid-template-columns: 120px 1fr 110px 56px; gap: 12px; margin-top: 8px; }
+.axis__scale {
+  display: flex; justify-content: space-between;
+  font-family: var(--mono); font-size: 11px; color: var(--text-faint);
+}
+.summary-group__empty {
+  margin-top: 14px; font-family: var(--mono); font-size: 12.5px; color: var(--text-muted);
+}
+
+/* --- footer --------------------------------------------------------------- */
+
+.colophon {
+  padding: 14px var(--gutter); border-top: 1px solid var(--border);
+  display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between;
+  font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+}
+
+@media print {
+  .contents { position: static; }
+  .pr__detail { display: grid !important; }
+  .table { overflow-x: visible; }
+}

@@ -1,0 +1,118 @@
+# ---------------------------------------------------------------------------
+# lab34-health-context/config.yaml
+#
+# Full reference configuration for @lab34/health.
+# Every key is shown; keys marked "optional" may be omitted.
+#
+# Interpolation: "{{ env.NAME }}" is replaced with process.env.NAME at load
+# time. The braces MUST be inside quotes — an unquoted {{ ... }} is a YAML
+# flow mapping and will not parse. A missing variable aborts the run.
+# ---------------------------------------------------------------------------
+version: "1"
+
+# --- Report-wide settings (optional block; shown with its defaults) ---------
+report:
+  title: "lab34/health"              # shown top-left in the report header
+  client_label: "ACME INTL"         # shown top-right, in the dashed box
+  timezone: "Europe/Brussels"        # used for every human-readable timestamp
+  locale: "en-GB"                    # date/number formatting
+  history_runs: 8                    # runs feeding sparklines + evolution bars
+  show_evolution: true               # false hides section 02 entirely
+  retention:
+    runs: 90                         # prune run metrics older than N runs (0 = keep all)
+    reports: 30                      # keep the last N report directories (0 = keep all)
+
+# --- Integrations -----------------------------------------------------------
+# Each entry needs a unique `id`; sections below reference integrations by it.
+integrations:
+  - id: "bitbucket_acme"
+    name: "ACME's Bitbucket"
+    type: "bitbucket"                # bitbucket | jira
+    workspace: "ACMEintl"           # Bitbucket workspace holding the repositories
+    username: "{{ env.BITBUCKET_ACMEINTL_USERNAME }}"
+    token: "{{ env.BITBUCKET_ACMEINTL_TOKEN }}"     # app password
+    base_url: "https://api.bitbucket.org/2.0"        # optional; override for Server/DC
+    timeout_ms: 30000                                # optional
+    max_retries: 3                                   # optional
+
+  - id: "jira_ACMEintl"
+    name: "ACME's Jira"
+    type: "jira"
+    base_url: "https://ACMEintl.atlassian.net"      # required for jira
+    username: "{{ env.JIRA_ACMEINTL_USERNAME }}"
+    token: "{{ env.JIRA_ACMEINTL_TOKEN }}"          # API token
+    timeout_ms: 30000                                # optional
+    max_retries: 3                                   # optional
+
+# --- Section 03: Pull Requests Flow ----------------------------------------
+pullrequests:
+  title: "Pull Requests Flow"
+  state: "OPEN"                      # OPEN | MERGED | DECLINED | ALL
+  # First matching rule wins, so order matters. Supported operators:
+  #   "< N", "<= N", "> N", ">= N", "N - M" (inclusive range).
+  # `color` accepts a palette name (green/yellow/red/grey) or a #RRGGBB value.
+  # `colour` is accepted as an alias.
+  age_indicators:
+    - slug: "ok"
+      hours: "< 24"
+      color: "green"
+    - slug: "warning"
+      hours: "< 48"
+      color: "yellow"
+    - slug: "problem"
+      hours: "> 48"
+      color: "red"
+  repositories:
+    - name: "PROJECT Backend"            # label shown in the report
+      integration: "bitbucket_acme"
+      slug: "project_backend"            # Bitbucket repository slug
+    - name: "PROJECT Frontend"
+      integration: "bitbucket_acme"
+      slug: "project_frontend"
+    - name: "PROJECT Infra"
+      integration: "bitbucket_acme"
+      slug: "project_infra"
+
+# --- Section 04: CICD Flow --------------------------------------------------
+cicd:
+  title: "CICD Flow"
+  window_hours: 24                   # pipelines started within this window
+  max_pipelines: 40                  # hard cap on rows in the report
+  repositories:
+    - name: "PROJECT Backend"
+      integration: "bitbucket_acme"
+      slug: "project_backend"
+    - name: "PROJECT Frontend"
+      integration: "bitbucket_acme"
+      slug: "project_frontend"
+    - name: "PROJECT Infra"
+      integration: "bitbucket_acme"
+      slug: "project_infra"
+
+# --- Section 05: Testing report --------------------------------------------
+# Placeholder for now: the section renders with an empty state.
+testing:
+  title: "Testing report"
+  placeholder: "No test data collected in this run."
+  hint: "Section reserved — configure a testing integration in config.yaml"
+
+# --- Section 06: Jira summaries --------------------------------------------
+# Defaults applied to every summary that does not override them.
+jira_defaults:
+  integration: "jira_ACMEintl"
+  max_results: 50
+  # Lanes of the per-ticket timeline, in display order. Any status returned by
+  # Jira that is not listed here is folded into the nearest preceding lane.
+  timeline_statuses: ["To Do", "In Progress", "Code Review", "QA", "Done"]
+
+jira_summaries:
+  - slug: "tech-debt-cloud"
+    title: "Technical debt @ Cloud"
+    jql: "project = PROJECT AND labels = tech-debt AND component = Cloud AND statusCategory != Done"
+  - slug: "tech-debt-physical"
+    title: "Technical debt @ Physical"
+    jql: "project = PROJECT AND labels = tech-debt AND component = Physical AND statusCategory != Done"
+  - slug: "tech-debt-infra"
+    title: "Technical debt @ Infra"
+    jql: "project = PROJECT AND labels = tech-debt AND component = Infra"
+    max_results: 25                  # per-summary override

@@ -1,0 +1,54 @@
+{
+  "name": "@lab34/health",
+  "version": "1.1.0",
+  "description": "Reports on the performance of development teams, from Jira and Bitbucket",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "lab34-health": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "docs",
+    "examples",
+    "README.md"
+  ],
+  "keywords": [
+    "metrics",
+    "jira",
+    "bitbucket",
+    "pull-requests",
+    "cicd",
+    "reporting"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lab34-es/health.git"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-assets.mjs",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build:test && node --test \"dist-test/**/*.test.js\"",
+    "build:test": "tsc -p tsconfig.json && node scripts/copy-assets.mjs dist-test",
+    "prepublishOnly": "npm run clean && npm run build",
+    "release": "bash scripts/release.sh",
+    "example": "npm run build:test && node scripts/build-example.mjs"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "js-yaml": "^4.1.0",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.15.0",
+    "typescript": "^5.8.3"
+  }
+}
