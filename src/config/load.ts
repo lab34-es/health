@@ -123,6 +123,15 @@ function parseIntegrations(value: unknown): IntegrationConfig[] {
     const workspace = optionalString(raw.workspace, `${where}.workspace`);
     if (workspace) integration.workspace = workspace;
     if (baseUrl) integration.baseUrl = baseUrl.replace(/\/+$/, '');
+
+    const cloudId = optionalString(raw.cloud_id, `${where}.cloud_id`);
+    if (cloudId) {
+      if (type !== 'jira') {
+        throw new HealthError(`${where}.cloud_id is only meaningful for jira integrations`,
+          'Bitbucket tokens are scoped without a gateway; drop the key.');
+      }
+      integration.cloudId = cloudId;
+    }
     return integration;
   });
 }

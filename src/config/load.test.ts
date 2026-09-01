@@ -143,3 +143,21 @@ test('an unknown config version is refused', () => {
   assert.throws(() => parseConfig('version: "2"\nintegrations: []\n', ENV),
     (error: unknown) => error instanceof HealthError && error.message.includes('version "2"'));
 });
+
+test('cloud_id is carried through for jira and refused elsewhere', () => {
+  const raw = `${MINIMAL}
+  - id: "j"
+    type: "jira"
+    base_url: "https://x.atlassian.net"
+    cloud_id: "cloud-123"
+    username: "u"
+    token: "t"
+`;
+  const config = parseConfig(raw, ENV);
+  assert.equal(config.integrations[1]?.cloudId, 'cloud-123');
+  // base_url is untouched by it: the ticket links still come from the site.
+  assert.equal(config.integrations[1]?.baseUrl, 'https://x.atlassian.net');
+
+  assert.throws(() => parseConfig(`${MINIMAL}    cloud_id: "cloud-123"\n`, ENV),
+    (error: unknown) => error instanceof HealthError && error.message.includes('only meaningful for jira'));
+});

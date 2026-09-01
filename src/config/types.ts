@@ -10,6 +10,12 @@ export interface IntegrationConfig {
   workspace?: string;
   /** Required for jira (the site URL); optional override for bitbucket. */
   baseUrl?: string;
+  /**
+   * Jira only: the site's cloud id. Set it when the token carries scopes —
+   * those are only accepted at the api.atlassian.com gateway, which this
+   * routes the API calls to. `baseUrl` still supplies the ticket links.
+   */
+  cloudId?: string;
   timeoutMs: number;
   maxRetries: number;
 }

@@ -29,8 +29,8 @@ integrations:
     name: "ACME's Bitbucket"
     type: "bitbucket"                # bitbucket | jira
     workspace: "ACMEintl"           # Bitbucket workspace holding the repositories
-    username: "{{ env.BITBUCKET_ACMEINTL_USERNAME }}"
-    token: "{{ env.BITBUCKET_ACMEINTL_TOKEN }}"     # app password
+    username: "{{ env.BITBUCKET_ACMEINTL_USERNAME }}"   # Atlassian account e-mail, not the Bitbucket username
+    token: "{{ env.BITBUCKET_ACMEINTL_TOKEN }}"     # API token, scopes: read:repository|pullrequest|pipeline:bitbucket
     base_url: "https://api.bitbucket.org/2.0"        # optional; override for Server/DC
     timeout_ms: 30000                                # optional
     max_retries: 3                                   # optional
@@ -38,9 +38,14 @@ integrations:
   - id: "jira_ACMEintl"
     name: "ACME's Jira"
     type: "jira"
-    base_url: "https://ACMEintl.atlassian.net"      # required for jira
-    username: "{{ env.JIRA_ACMEINTL_USERNAME }}"
-    token: "{{ env.JIRA_ACMEINTL_TOKEN }}"          # API token
+    base_url: "https://ACMEintl.atlassian.net"      # required for jira; ticket links are built from it
+    username: "{{ env.JIRA_ACMEINTL_USERNAME }}"        # Atlassian account e-mail
+    token: "{{ env.JIRA_ACMEINTL_TOKEN }}"          # API token; unscoped unless cloud_id is set
+    # cloud_id: "..."                                # optional; set it to use a token WITH scopes.
+    #                                                # Scoped tokens are only accepted at
+    #                                                # api.atlassian.com/ex/jira/<cloud_id>, which this
+    #                                                # routes to; base_url still supplies the links.
+    #                                                # curl -s https://SITE.atlassian.net/_edge/tenant_info
     timeout_ms: 30000                                # optional
     max_retries: 3                                   # optional
 

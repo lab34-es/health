@@ -93,3 +93,37 @@ test('a site without a myself endpoint still searches', async () => {
   assert.deepEqual(await client.search('project = LOOP', 50), []);
   assert.ok(seen.includes('/rest/api/3/search/jql'));
 });
+
+test('a scoped token reaches the gateway while ticket links stay on the site', async () => {
+  const urls: string[] = [];
+  globalThis.fetch = (async (input: Parameters<typeof fetch>[0]) => {
+    const url = String(input);
+    urls.push(url);
+    const body = url.endsWith('/myself')
+      ? { displayName: 'A Tester' }
+      : {
+        isLast: true,
+        issues: [{
+          key: 'LOOP-7',
+          fields: {
+            summary: 'Scoped', status: { name: 'Done', statusCategory: { key: 'done' } },
+            created: '2026-08-01T10:00:00.000Z', updated: '2026-08-02T10:00:00.000Z',
+          },
+        }],
+      };
+    return new Response(JSON.stringify(body), {
+      status: 200, headers: { 'content-type': 'application/json' },
+    });
+  }) as typeof fetch;
+
+  const client = new JiraClient({ ...integration, cloudId: 'cloud-123' }, silentLogger);
+  const results = await client.search('project = LOOP', 50);
+
+  // Every call goes to the gateway; the site URL would refuse a scoped token.
+  assert.ok(urls.length > 0);
+  for (const url of urls) {
+    assert.ok(url.startsWith('https://api.atlassian.com/ex/jira/cloud-123/rest/'), `sent to ${url}`);
+  }
+  // api.atlassian.com is not a link anyone can follow, so tickets keep the site.
+  assert.equal(results[0]?.input.url, 'https://example.atlassian.net/browse/LOOP-7');
+});

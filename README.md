@@ -38,8 +38,8 @@ Copy [`examples/lab34-health-context/config.yaml`](examples/lab34-health-context
 starting point — it documents every key — then export the credentials it refers to:
 
 ```bash
-export BITBUCKET_INTL_USERNAME=... BITBUCKET_INTL_TOKEN=...   # app password
-export JIRA_INTL_USERNAME=... JIRA_INTL_TOKEN=...             # API token
+export BITBUCKET_INTL_USERNAME=... BITBUCKET_INTL_TOKEN=...   # e-mail + scoped API token
+export JIRA_INTL_USERNAME=... JIRA_INTL_TOKEN=...             # e-mail + API token
 lab34-health
 ```
 
@@ -57,10 +57,98 @@ The directory is used as the context itself, so `config.yaml`, `database.sql` an
 directly inside it. A relative path resolves against `--cwd` (the current directory by default).
 
 Credentials are read from the environment and sent in an `Authorization` header. They are never
-written to the database, the report, or any log or error message.
+written to the database, the report, or any log or error message. Which token to create, and with
+which scopes, is in [Atlassian credentials](#atlassian-credentials) below.
 
 Both YAML formats are specified in [`docs/formats.md`](docs/formats.md), with a full worked example of
 each under [`examples/`](examples/).
+
+## Atlassian credentials
+
+Both integrations authenticate the same way: an HTTP Basic `Authorization` header built from the
+`username` and `token` of the integration. Both want an **Atlassian API token** — Bitbucket app
+passwords reached end of life on 9 June 2026 and are no longer accepted.
+
+Create tokens at
+[id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens).
+
+| | Jira | Bitbucket |
+| --- | --- | --- |
+| `username` | your Atlassian account e-mail | your Atlassian account e-mail — **not** your Bitbucket username |
+| `token` | API token, scoped or not — see below | API token, created **with** the three scopes below |
+| `base_url` | `https://your-site.atlassian.net` | `https://api.bitbucket.org/2.0` (the default) |
+
+Use one token per product; a Bitbucket token carries Bitbucket scopes and cannot read Jira.
+
+### Bitbucket scopes
+
+| Scope | Why it is needed |
+| --- | --- |
+| `read:repository:bitbucket` | Makes the workspace and each configured repository visible, and covers a pull request's commits and diffstat |
+| `read:pullrequest:bitbucket` | The pull request listing, detail and activity feed behind section 03 |
+| `read:pipeline:bitbucket` | Pipelines and their steps, behind section 04 |
+
+Grant all three. Bitbucket's scopes do not imply one another — `read:pullrequest:bitbucket` on its
+own does not grant repository read — and nothing beyond them is needed, since the tool only ever
+issues GETs. Drop `read:pipeline:bitbucket` if you omit the `cicd` section, and
+`read:pullrequest:bitbucket` if you omit `pullrequests`.
+
+### Jira scopes
+
+Either kind of Atlassian API token works, but they are addressed differently — a token created
+**with** scopes is refused at the site URL, and only accepted at
+`https://api.atlassian.com/ex/jira/<cloudId>`.
+
+**Unscoped** (the simplest): create the token with **"Create API token"**, leave `cloud_id` out, and
+`base_url` serves as both the API host and the source of ticket links. No scopes to choose.
+
+**Scoped**: create it with **"Create API token with scopes"**, granting `read:jira-work` (JQL search,
+issue fields, changelogs) and `read:jira-user` (the identity check, plus assignee and reporter
+names). Then set `cloud_id`, which routes the API calls to the gateway while `base_url` goes on
+building the ticket links — those have to stay on the site to be clickable:
+
+```yaml
+  - id: "jira_acme"
+    type: "jira"
+    base_url: "https://acme.atlassian.net"             # ticket links
+    cloud_id: "8a0de62b-7c72-4a49-a62b-48bd36a5023b"   # API calls
+```
+
+Find the cloud id with:
+
+```bash
+curl -s https://your-site.atlassian.net/_edge/tenant_info
+```
+
+Mismatch the two and the run fails its credential check with `the credentials were not accepted
+(401)` — a scoped token without `cloud_id`, or an unscoped one with it. Scopes cannot be added to an
+existing token; switching between the two means creating a new one.
+
+### What the account behind the token must be able to see
+
+Scopes only cap what a token may do; the account's own permissions still apply.
+
+- **Jira** — *Browse Projects* on every project a configured JQL touches. Jira answers an
+  unauthorised search with an empty result set rather than an error, so a project the account cannot
+  see looks like a summary that matches nothing. The run therefore checks `/myself` first and fails
+  the integration outright when the credentials are refused.
+- **Bitbucket** — read access to the workspace and to each repository listed under `pullrequests`
+  and `cicd`.
+
+### Endpoints called
+
+Everything the tokens are used for, in full:
+
+| Product | Endpoints |
+| --- | --- |
+| Jira | `GET /rest/api/3/myself`, `POST /rest/api/3/search/jql`, `GET /rest/api/3/issue/{key}/changelog` (falling back to `/rest/api/2/myself`, `/rest/api/2/search` and `/rest/api/2/issue/{key}?expand=changelog` on Server/DC) |
+| Bitbucket | `GET /repositories/{workspace}/{slug}/pullrequests`, `.../pullrequests/{id}`, `.../diffstat`, `.../commits`, `.../activity`, `.../pipelines`, `.../pipelines/{uuid}/steps/` |
+
+### Expiry
+
+Atlassian API tokens expire between 1 and 365 days after creation. An expired or revoked token fails
+the run for that integration with `the credentials were not accepted (401)`; if the other integration
+still syncs, the report is written with a banner naming what did not refresh.
 
 ## What the report contains
 

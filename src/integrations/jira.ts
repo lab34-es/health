@@ -57,8 +57,12 @@ export interface JiraSearchResult {
   updatedAt: string;
 }
 
+/** Where a scoped token's calls have to go; the site URL refuses them. */
+const GATEWAY = 'https://api.atlassian.com/ex/jira';
+
 export class JiraClient {
   private readonly http: HttpClient;
+  /** The site URL — what ticket links are built from, always. */
   private readonly site: string;
   /** Resolved on first use, then reused for the rest of the run. */
   private modernSearch: boolean | undefined;
@@ -67,7 +71,12 @@ export class JiraClient {
 
   constructor(private readonly integration: IntegrationConfig, private readonly logger: Logger) {
     this.site = (integration.baseUrl ?? '').replace(/\/+$/, '');
-    this.http = new HttpClient(integration, this.site, logger);
+    // A token created with scopes is only accepted at the gateway, addressed
+    // by cloud id rather than by site name. Keeping the two apart means the
+    // report's ticket links stay on the site URL either way — an
+    // api.atlassian.com link is not one anybody can follow.
+    const api = integration.cloudId ? `${GATEWAY}/${integration.cloudId}` : this.site;
+    this.http = new HttpClient(integration, api, logger);
   }
 
   get id(): string { return this.integration.id; }
@@ -134,9 +143,14 @@ export class JiraClient {
               this.integration.id,
               `${this.integration.name}: the credentials were not accepted (${error.status})`,
               error.status,
-              'Jira answers an unauthenticated search with an empty result set rather than an error, '
-                + 'so a bad credential looks like a summary that matches nothing. Check the username '
-                + '(the account e-mail) and the token (a Jira API token) for this integration.',
+              this.integration.cloudId
+                ? 'These calls go to the api.atlassian.com gateway, which only accepts a token '
+                  + 'created *with* scopes — read:jira-work and read:jira-user. Check that the token '
+                  + 'carries them and that cloud_id names this site.'
+                : 'Check the username (the account e-mail) and the token. A token created *with* '
+                  + 'scopes is refused here: scoped tokens are only accepted at the '
+                  + 'api.atlassian.com gateway, so either create one without scopes or set cloud_id '
+                  + 'for this integration to route the calls there.',
             );
           }
           throw error;

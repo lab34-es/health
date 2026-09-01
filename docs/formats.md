@@ -39,6 +39,38 @@ the run with exit code 1 and names the variable; secrets are never echoed back, 
 Sections reference integrations by `id`, so credentials are declared once. A section that names an
 unknown `id` fails validation before any network call is made.
 
+### Integration keys
+
+| Key | Required | Notes |
+| --- | --- | --- |
+| `id` | yes | unique; sections reference it |
+| `type` | yes | `bitbucket` or `jira` |
+| `name` | no | label used in logs and warnings; defaults to `id` |
+| `username` | yes | the Atlassian account e-mail |
+| `token` | yes | an Atlassian API token |
+| `workspace` | bitbucket | the workspace holding the repositories |
+| `base_url` | jira | the site URL; also what ticket links are built from |
+| `cloud_id` | no | jira only — set it when the token carries scopes (see below) |
+| `timeout_ms` | no | default `30000` |
+| `max_retries` | no | default `3` |
+
+### Scoped Jira tokens and `cloud_id`
+
+An Atlassian API token created **with** scopes is refused at the site URL — it is only accepted at
+`https://api.atlassian.com/ex/jira/<cloudId>`. Setting `cloud_id` sends the API calls there while
+`base_url` goes on supplying the report's ticket links, which have to stay on the site to be
+clickable:
+
+```yaml
+  - id: "jira_acme"
+    type: "jira"
+    base_url: "https://acme.atlassian.net"   # ticket links
+    cloud_id: "8a0de62b-7c72-4a49-a62b-48bd36a5023b"   # API calls
+```
+
+Omit `cloud_id` and the calls go to `base_url`, which is what an unscoped token wants. Find the cloud
+id with `curl -s https://your-site.atlassian.net/_edge/tenant_info`.
+
 ### Age indicator rules
 
 `pullrequests.age_indicators` is an ordered list; **the first matching rule wins**, so order matters.
