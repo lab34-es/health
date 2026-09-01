@@ -1,6 +1,6 @@
 {
   "name": "@lab34/health",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Reports on the performance of development teams, from Jira and Bitbucket",
   "license": "MIT",
   "type": "module",
