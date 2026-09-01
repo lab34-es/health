@@ -193,7 +193,7 @@ underlying pull requests and tickets move on.
 ## When a source is down
 
 A source that fails to sync records a warning and keeps the data last collected for it; the report
-renders with a banner naming what did not refresh. A run fails outright only when *every* configured
+renders with a banner naming what did not refresh. A run fails outright when *every* configured
 source fails. A report built from yesterday's Jira and today's Bitbucket beats no report, as long as
 it says so.
 
@@ -212,7 +212,8 @@ it says so.
     --version     Show the version
 ```
 
-Exit code 0 means a report was written; 1 means the run failed.
+Exit code 0 means a report was written; 1 means the run failed — including when a source refused the
+credentials, which fails the run even if the rest of it succeeded.
 
 ## Development
 

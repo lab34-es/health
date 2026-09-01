@@ -1,5 +1,5 @@
 import { IntegrationRegistry } from '../integrations/registry.js';
-import { HealthError } from '../util/errors.js';
+import { HealthError, IntegrationError } from '../util/errors.js';
 import { LAST_RUN_AT, type Store } from '../db/store.js';
 import type { HealthConfig, RepositoryConfig } from '../config/types.js';
 import type { Logger } from '../util/logger.js';
@@ -20,12 +20,29 @@ function scopeKey(...parts: string[]): string {
 }
 
 /**
+ * Refused credentials end the run; everything else degrades to a warning.
+ *
+ * The tolerance below exists for outages — a source that is down now will
+ * likely be back by the next run, so yesterday's data beats no report. A
+ * credential that is refused is not an outage: it is a configuration error
+ * that will still be there tomorrow, and degrading would leave the report
+ * quietly stale behind a banner until somebody happened to read it. Failing
+ * the run instead puts it in the exit code, where a schedule will see it.
+ */
+function abortOnRefusedCredentials(error: unknown): void {
+  if (error instanceof IntegrationError && (error.status === 401 || error.status === 403)) {
+    throw error;
+  }
+}
+
+/**
  * Fetches everything the report needs into the database.
  *
  * A section that fails to sync records a warning and leaves its previously
  * stored data in place rather than aborting the run: a report built from
  * yesterday's Jira and today's Bitbucket is more useful than no report, as
- * long as it says so.
+ * long as it says so. Refused credentials are the exception — see
+ * `abortOnRefusedCredentials`.
  */
 export async function sync(
   config: HealthConfig, store: Store, runId: number, now: Date, logger: Logger,
@@ -82,6 +99,7 @@ export async function sync(
 
         store.setSyncState(scopeKey(repo.integration, repo.slug, 'pullrequests'), now.toISOString(), runId);
       } catch (error) {
+        abortOnRefusedCredentials(error);
         warnings.push(`Pull requests for ${repo.name}: ${(error as Error).message}`);
         logger.warn(`pull requests · ${repo.name} — ${(error as Error).message}`);
       }
@@ -105,6 +123,7 @@ export async function sync(
 
         store.setSyncState(scopeKey(repo.integration, repo.slug, 'pipelines'), now.toISOString(), runId);
       } catch (error) {
+        abortOnRefusedCredentials(error);
         warnings.push(`Pipelines for ${repo.name}: ${(error as Error).message}`);
         logger.warn(`pipelines · ${repo.name} — ${(error as Error).message}`);
       }
@@ -137,6 +156,7 @@ export async function sync(
       store.recordSummaryMembers(runId, summary.slug, issueIds);
       store.setSyncState(scopeKey(summary.integration, summary.slug, 'jira'), now.toISOString(), runId);
     } catch (error) {
+      abortOnRefusedCredentials(error);
       warnings.push(`Jira summary "${summary.title}": ${(error as Error).message}`);
       logger.warn(`jira · ${summary.title} — ${(error as Error).message}`);
 
