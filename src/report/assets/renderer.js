@@ -267,9 +267,8 @@
     if (!section) return null;
 
     var sort = section.default_sort || { key: 'age', direction: 'desc' };
+    // Every pull request starts collapsed; the summary rows are the overview.
     var open = {};
-    // The oldest pull request is the one worth reading first, so it starts open.
-    if (section.items && section.items.length > 0) open[section.items[0].id] = true;
 
     var body = el('div', {});
 
@@ -332,7 +331,10 @@
         el('div', { class: 'section__title', text: section.title }),
         el('div', { class: 'flags' }, flags),
       ]),
-      el('div', { class: 'section__headline', text: (section.headline || {}).display }),
+      el('div', { class: 'section__headline' }, [
+        el('span', { text: (section.headline || {}).display }),
+        section.expand_hint ? el('span', { class: 'section__hint', text: section.expand_hint }) : null,
+      ]),
       el('div', { class: 'table' }, el('div', { class: 'table__inner' }, body)),
     ]);
   }
@@ -340,7 +342,9 @@
   function renderPullRequest(pr, section, open, redraw) {
     var isOpen = !!open[pr.id];
 
-    var summary = el('div', { class: 'row pr__summary', role: 'button', tabindex: '0' }, [
+    var summary = el('div', {
+      class: 'row pr__summary', role: 'button', tabindex: '0', 'aria-expanded': String(isOpen),
+    }, [
       el('div', { class: 'mono', text: pr.repository }),
       el('div', {}, [
         el('div', { class: 'pr__title', text: pr.title }),
@@ -369,37 +373,35 @@
 
     var children = [summary];
 
-    if (isOpen) {
-      var commits = (pr.commits || []).map(function (commit) {
-        return el('div', { class: 'commit' }, [
-          el('span', { class: 'commit__sha', text: commit.sha }),
-          el('span', { class: 'commit__message', text: commit.message }),
-          el('span', { class: 'commit__spacer' }),
-          el('span', { class: 'commit__when', text: commit.when_display }),
-        ]);
-      });
+    var commits = (pr.commits || []).map(function (commit) {
+      return el('div', { class: 'commit' }, [
+        el('span', { class: 'commit__sha', text: commit.sha }),
+        el('span', { class: 'commit__message', text: commit.message }),
+        el('span', { class: 'commit__spacer' }),
+        el('span', { class: 'commit__when', text: commit.when_display }),
+      ]);
+    });
 
-      var facts = (pr.facts || []).map(function (fact) {
-        return el('div', { class: 'fact' }, [
-          el('span', { class: 'fact__key', text: fact.key }),
-          el('span', { style: { color: indicatorColor(fact.indicator) }, text: fact.value }),
-        ]);
-      });
+    var facts = (pr.facts || []).map(function (fact) {
+      return el('div', { class: 'fact' }, [
+        el('span', { class: 'fact__key', text: fact.key }),
+        el('span', { style: { color: indicatorColor(fact.indicator) }, text: fact.value }),
+      ]);
+    });
 
-      children.push(el('div', { class: 'pr__detail' }, [
-        el('div', {}, [
-          el('div', { class: 'detail__heading', text: 'Commits — ' + (pr.commits || []).length }),
-          el('div', { class: 'commits' }, commits.length ? commits
-            : el('div', { class: 'commit__when', text: 'No commits recorded.' })),
-        ]),
-        el('div', {}, [
-          el('div', { class: 'detail__heading', text: 'Review & changes' }),
-          el('div', { class: 'facts' }, facts),
-          pr.url ? el('div', { style: { 'margin-top': '10px', 'font-family': 'var(--mono)', 'font-size': '12px' } },
-            el('a', { href: pr.url, target: '_blank', rel: 'noreferrer noopener', text: 'Open in Bitbucket ↗' })) : null,
-        ]),
-      ]));
-    }
+    children.push(el('div', { class: 'pr__detail', hidden: isOpen ? null : 'hidden' }, [
+      el('div', {}, [
+        el('div', { class: 'detail__heading', text: 'Commits — ' + (pr.commits || []).length }),
+        el('div', { class: 'commits' }, commits.length ? commits
+          : el('div', { class: 'commit__when', text: 'No commits recorded.' })),
+      ]),
+      el('div', {}, [
+        el('div', { class: 'detail__heading', text: 'Review & changes' }),
+        el('div', { class: 'facts' }, facts),
+        pr.url ? el('div', { style: { 'margin-top': '10px', 'font-family': 'var(--mono)', 'font-size': '12px' } },
+          el('a', { href: pr.url, target: '_blank', rel: 'noreferrer noopener', text: 'Open in Bitbucket ↗' })) : null,
+      ]),
+    ]));
 
     return el('div', { class: 'pr' }, children);
   }
@@ -479,6 +481,8 @@
 
     var timeline = section.timeline || {};
     var query = '';
+    // Tickets start collapsed; the heads read as a list until one is opened.
+    var open = {};
     var groups = el('div', {});
     var count = el('span', { class: 'search__count', text: (section.totals || {}).display });
 
@@ -509,7 +513,7 @@
             el('div', { class: 'summary-group__meta', text: group.count_display + ' · ' + group.jql }),
           ]),
           el('div', { class: 'tickets' }, tickets.map(function (ticket) {
-            return renderTicket(ticket, section, timeline);
+            return renderTicket(ticket, section, timeline, open, draw);
           })),
           tickets.length === 0
             ? el('div', { class: 'summary-group__empty', text: group.empty_display })
@@ -541,11 +545,15 @@
         el('div', { class: 'section__eyebrow', text: section.index + ' — ' + section.title }),
         search,
       ]),
+      section.expand_hint
+        ? el('div', { class: 'section__headline' },
+          el('span', { class: 'section__hint', text: section.expand_hint }))
+        : null,
       groups,
     ]);
   }
 
-  function renderTicket(ticket, section, timeline) {
+  function renderTicket(ticket, section, timeline, open, redraw) {
     var typeIndicator = ((section.types || {})[ticket.type] || {}).indicator || 'neutral';
     var typeColor = indicatorColor(typeIndicator);
     var laneColors = theme.lanes || {};
@@ -579,27 +587,46 @@
       ]);
     });
 
+    var isOpen = !!open[ticket.key];
+
+    var head = el('div', {
+      class: 'ticket__head', role: 'button', tabindex: '0', 'aria-expanded': String(isOpen),
+    }, [
+      el('span', { class: 'ticket__type', style: { color: typeColor, 'border-color': typeColor }, text: ticket.type }),
+      ticket.url
+        ? el('a', { class: 'ticket__key', href: ticket.url, target: '_blank', rel: 'noreferrer noopener', text: ticket.key })
+        : el('span', { class: 'ticket__key', text: ticket.key }),
+      el('span', { class: 'ticket__title', text: ticket.title }),
+      el('span', { class: 'ticket__spacer' }),
+      el('span', { class: 'ticket__status', text: ticket.status }),
+      el('span', { class: 'ticket__meta', text: ticket.meta_display }),
+      el('span', { class: 'ticket__chevron', text: isOpen ? '▲ less' : '▼ more' }),
+    ]);
+
+    function toggle() { open[ticket.key] = !open[ticket.key]; redraw(); }
+    head.addEventListener('click', function (event) {
+      // The issue key is a link out to Jira; let it through instead of toggling.
+      if (event.target.closest('a')) return;
+      toggle();
+    });
+    head.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggle(); }
+    });
+
     return el('div', { class: 'ticket' }, [
-      el('div', { class: 'ticket__head' }, [
-        el('span', { class: 'ticket__type', style: { color: typeColor, 'border-color': typeColor }, text: ticket.type }),
-        ticket.url
-          ? el('a', { class: 'ticket__key', href: ticket.url, target: '_blank', rel: 'noreferrer noopener', text: ticket.key })
-          : el('span', { class: 'ticket__key', text: ticket.key }),
-        el('span', { class: 'ticket__title', text: ticket.title }),
-        el('span', { class: 'ticket__spacer' }),
-        el('span', { class: 'ticket__status', text: ticket.status }),
-        el('span', { class: 'ticket__meta', text: ticket.meta_display }),
-      ]),
-      ticket.description ? el('div', { class: 'ticket__description', text: ticket.description }) : null,
-      el('div', { class: 'ticket__timeline' }, [
-        el('div', { class: 'lanes' }, lanes),
-        el('div', { class: 'axis' }, [
-          el('div', {}),
-          el('div', { class: 'axis__scale' }, [
-            el('span', { text: (ticket.timeline || {}).axis_start_display }),
-            el('span', { text: (ticket.timeline || {}).axis_end_display }),
+      head,
+      el('div', { class: 'ticket__body', hidden: isOpen ? null : 'hidden' }, [
+        ticket.description ? el('div', { class: 'ticket__description', text: ticket.description }) : null,
+        el('div', { class: 'ticket__timeline' }, [
+          el('div', { class: 'lanes' }, lanes),
+          el('div', { class: 'axis' }, [
+            el('div', {}),
+            el('div', { class: 'axis__scale' }, [
+              el('span', { text: (ticket.timeline || {}).axis_start_display }),
+              el('span', { text: (ticket.timeline || {}).axis_end_display }),
+            ]),
+            el('div', {}), el('div', {}),
           ]),
-          el('div', {}), el('div', {}),
         ]),
       ]),
     ]);
@@ -609,7 +636,12 @@
     var footer = meta.footer || {};
     return el('div', { class: 'colophon' }, [
       el('span', { text: footer.left }),
-      el('span', { text: footer.right }),
+      footer.right_href
+        ? el('a', {
+            class: 'colophon__link', text: footer.right, href: footer.right_href,
+            target: '_blank', rel: 'noreferrer',
+          })
+        : el('span', { text: footer.right }),
     ]);
   }
 

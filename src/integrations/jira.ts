@@ -62,6 +62,8 @@ export class JiraClient {
   private readonly site: string;
   /** Resolved on first use, then reused for the rest of the run. */
   private modernSearch: boolean | undefined;
+  /** The credential check runs once per run; this holds it for later callers. */
+  private authenticated: Promise<void> | undefined;
 
   constructor(private readonly integration: IntegrationConfig, private readonly logger: Logger) {
     this.site = (integration.baseUrl ?? '').replace(/\/+$/, '');
@@ -79,6 +81,8 @@ export class JiraClient {
    * `updated` has not moved since the last run.
    */
   async search(jql: string, maxResults: number): Promise<JiraSearchResult[]> {
+    await this.requireAuthentication();
+
     const issues = this.modernSearch === false
       ? await this.searchLegacy(jql, maxResults)
       : await this.searchModern(jql, maxResults);
@@ -104,6 +108,44 @@ export class JiraClient {
         },
       };
     });
+  }
+
+  /**
+   * Fails the summary when the credentials are not accepted.
+   *
+   * Jira does not answer an unauthenticated search with 401 — it runs the
+   * query as an anonymous user, for whom every project is invisible, and
+   * answers 200 with an empty issue list. A wrong username or token would
+   * otherwise be indistinguishable from a JQL that genuinely matches nothing,
+   * and the summary would silently report zero tickets. `myself` is the one
+   * endpoint that does refuse anonymous callers, so it is asked first.
+   */
+  private async requireAuthentication(): Promise<void> {
+    this.authenticated ??= (async () => {
+      for (const path of ['/rest/api/3/myself', '/rest/api/2/myself']) {
+        try {
+          const me = await this.http.json<JiraUser>(path);
+          this.logger.debug(`authenticated as ${userName(me) ?? 'an unnamed account'}`);
+          return;
+        } catch (error) {
+          if (error instanceof IntegrationError && ABSENT.has(error.status ?? 0)) continue;
+          if (error instanceof IntegrationError && (error.status === 401 || error.status === 403)) {
+            throw new IntegrationError(
+              this.integration.id,
+              `${this.integration.name}: the credentials were not accepted (${error.status})`,
+              error.status,
+              'Jira answers an unauthenticated search with an empty result set rather than an error, '
+                + 'so a bad credential looks like a summary that matches nothing. Check the username '
+                + '(the account e-mail) and the token (a Jira API token) for this integration.',
+            );
+          }
+          throw error;
+        }
+      }
+      this.logger.debug('no myself endpoint — skipping the credential check');
+    })();
+
+    await this.authenticated;
   }
 
   /** POST /rest/api/3/search/jql — token paginated (current Jira Cloud). */

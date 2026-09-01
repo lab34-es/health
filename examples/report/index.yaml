@@ -32,7 +32,8 @@ report:
   meta_display: "run #482 · 2026-08-20 09:14 UTC · synced 3m 12s · 3 repositories"
   footer:
     left: "reports/2026-08-20T09-14-02Z/index.html · index.yaml alongside"
-    right: "lab34/health · @lab34/health"
+    right: "@lab34/health"
+    right_href: "https://github.com/lab34-es/health"
   warnings: []
 theme:
   palette:
@@ -414,6 +415,7 @@ pull_requests:
   default_sort:
     key: "age"
     direction: "desc"
+  expand_hint: "Click a pull request to see its commits, review and changes."
   items:
     - id: "project_backend#412"
       repository: "PROJECT Backend"
@@ -1082,6 +1084,7 @@ jira_summaries:
       indicator: "problem"
     Task:
       indicator: "neutral"
+  expand_hint: "Click a ticket to see its description and timeline."
   items:
     - slug: "tech-debt-cloud"
       title: "Technical debt @ Cloud"

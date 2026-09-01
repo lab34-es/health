@@ -193,7 +193,8 @@ export function buildReport(input: BuildInput): ReportDocument {
       ].join(' · '),
       footer: {
         left: `reports/${reportId}/index.html · index.yaml alongside`,
-        right: 'lab34/health · @lab34/health',
+        right: '@lab34/health',
+        right_href: 'https://github.com/lab34-es/health',
       },
       warnings: sync.warnings,
     },
@@ -354,6 +355,7 @@ export function buildReport(input: BuildInput): ReportDocument {
         { key: 'expand', label: '', align: 'right', sortable: false },
       ],
       default_sort: { key: 'age', direction: 'desc' },
+      expand_hint: 'Click a pull request to see its commits, review and changes.',
       items: pullRequests
         .map((pr) => buildPullRequestItem(pr))
         .sort((a, b) => b.age_hours - a.age_hours),
@@ -621,6 +623,7 @@ export function buildReport(input: BuildInput): ReportDocument {
       },
       timeline: { statuses: laneOrder, heavy_share: 0.35, empty_display: '—' },
       types,
+      expand_hint: 'Click a ticket to see its description and timeline.',
       items,
     };
   }

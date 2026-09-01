@@ -27,7 +27,7 @@ export interface ReportMeta {
   previous_run: { number: number; generated_at: string } | null;
   scope: { integrations: number; repositories: number; jira_summaries: number };
   meta_display: string;
-  footer: { left: string; right: string };
+  footer: { left: string; right: string; right_href: string };
   warnings: string[];
 }
 
@@ -104,6 +104,7 @@ export interface PullRequestsSection {
   age_indicators: { slug: string; rule: string; label: string; color: string }[];
   columns: { key: string; label: string; align: 'left' | 'right'; sortable: boolean }[];
   default_sort: { key: string; direction: 'asc' | 'desc' };
+  expand_hint: string;
   items: PullRequestItem[];
 }
 
@@ -173,6 +174,7 @@ export interface JiraSummariesSection {
   totals: { tickets: number; summaries: number; display: string };
   timeline: { statuses: string[]; heavy_share: number; empty_display: string };
   types: Record<string, { indicator: Indicator }>;
+  expand_hint: string;
   items: SummaryGroup[];
 }
 

@@ -93,7 +93,9 @@ input:focus-visible, [tabindex]:focus-visible, button:focus-visible {
 .section__aside { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
 .section__headline {
   font-family: var(--mono); font-size: 13px; color: var(--text-muted); margin-bottom: 20px;
+  display: flex; flex-wrap: wrap; gap: 4px 16px;
 }
+.section__hint { color: var(--accent-deep); }
 
 /* --- 01 summary ----------------------------------------------------------- */
 
@@ -187,6 +189,8 @@ input:focus-visible, [tabindex]:focus-visible, button:focus-visible {
 .chip { font-family: var(--mono); font-size: 11px; padding: 2px 6px; border: 1px solid; }
 .pr__chevron { font-family: var(--mono); font-size: 11.5px; color: var(--accent); text-align: right; }
 
+.pr__detail[hidden] { display: none; }
+
 .pr__detail {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 24px; padding: 4px 20px 22px;
@@ -247,8 +251,11 @@ input:focus-visible, [tabindex]:focus-visible, button:focus-visible {
 .ticket { background: var(--surface-raised); border: 1px solid var(--border); }
 .ticket__head {
   display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px;
-  padding: 14px 20px; border-bottom: 1px solid var(--border-soft);
+  padding: 14px 20px; border-bottom: 1px solid var(--border-soft); cursor: pointer;
 }
+.ticket__head:hover { background: var(--surface-sunken); }
+.ticket__head[aria-expanded='false'] { border-bottom: none; }
+.ticket__chevron { font-family: var(--mono); font-size: 11.5px; color: var(--accent); }
 .ticket__type { font-family: var(--mono); font-size: 11px; padding: 2px 7px; border: 1px solid; }
 .ticket__key { font-family: var(--mono); font-size: 12.5px; color: var(--accent); }
 .ticket__title { font-size: 15px; font-weight: 600; }
@@ -296,8 +303,14 @@ input:focus-visible, [tabindex]:focus-visible, button:focus-visible {
   font-family: var(--mono); font-size: 12px; color: var(--text-muted);
 }
 
+.colophon__link { color: inherit; }
+.colophon__link:hover { color: var(--text); text-decoration: underline; }
+
 @media print {
   .contents { position: static; }
   .pr__detail { display: grid !important; }
+  .ticket__body { display: block !important; }
+  .ticket__head { border-bottom: 1px solid var(--border-soft) !important; }
+  .pr__chevron, .ticket__chevron, .section__hint { display: none; }
   .table { overflow-x: visible; }
 }
